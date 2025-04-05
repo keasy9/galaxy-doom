@@ -1,8 +1,8 @@
-import { Start } from './scenes/Start.ts';
 import { AUTO, Game, Scale,Types } from 'phaser';
+//import { Boot } from './scenes/Boot.ts';
+//import { Menu } from "./scenes/Menu.ts";
+import { Level } from "./scenes/Level.ts";
 
-//  Find out more information about the Start Config at:
-//  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
 const config: Types.Core.GameConfig = {
     type: AUTO,
     width: 420,
@@ -16,7 +16,11 @@ const config: Types.Core.GameConfig = {
         mode: Scale.ENVELOP,
         autoCenter: Scale.CENTER_BOTH,
     },
-    scene: [Start],
+    scene: [
+        // Boot,
+        // Menu,
+        Level
+    ],
 };
 
 export default new Game(config);
