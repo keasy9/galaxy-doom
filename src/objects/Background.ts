@@ -13,9 +13,9 @@ export class Background extends Phaser.GameObjects.Layer {
     static preload(scene: Scene) {
         const { load } = scene;
 
-        load.image(BG_STARS, ASSETS_DIR + BG_STARS);
-        load.image(BG_DUST, ASSETS_DIR + BG_DUST);
-        load.image(BG_PLANETS, ASSETS_DIR + BG_PLANETS);
+        load.image(BG_STARS, P_TEXTURES + BG_STARS);
+        load.image(BG_DUST, P_TEXTURES + BG_DUST);
+        load.image(BG_PLANETS, P_TEXTURES + BG_PLANETS);
     }
 
     create() {

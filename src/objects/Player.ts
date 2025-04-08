@@ -1,120 +1,105 @@
 import { Scene } from "phaser";
-import { Bullet } from "./Bullet.ts";
 
-const PLAYER = 'player.png';
-const PLAYER_CANNON = 'player_cannon.png';
-
-const FIRE_ANIM_FIRE = 'fire_fire';
-const FIRE_ANIM_END  = 'fire_end';
-
-const PLAYER_VELOCITY = 300;
+const P_SPACESHIP = 'spaceship-white.png';
+const P_PORTHOLE = 'porthole-blue.png';
+const P_EXHAUST = 'exhaust-variants.png';
 
 export class Player extends Phaser.GameObjects.Container {
-    protected cannonSprite: Phaser.GameObjects.Sprite;
-    protected playerSprite: Phaser.GameObjects.Sprite;
+    protected spaceshipSprite: Phaser.GameObjects.Sprite;
+    protected portholeSprite: Phaser.GameObjects.Sprite;
+    protected exhaustSprite: Phaser.GameObjects.Sprite;
 
-    protected fireDuration: number;
-    protected isFiring = false;
+    protected exhaustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
-    protected inputs?: Phaser.Types.Input.Keyboard.CursorKeys & { fire?: Phaser.Input.Keyboard.Key};
+    protected inputs?: Phaser.Types.Input.Keyboard.CursorKeys;
+
+    protected speed = 200;
 
     constructor(scene: Scene, x: number, y: number) {
-        super(scene, x, y - 20, []);
+        super(scene, x, y, []);
     }
 
     static preload(scene: Scene) {
         const { load } = scene;
 
-        load.image(PLAYER, ASSETS_DIR + PLAYER);
-        load.spritesheet(
-            PLAYER_CANNON,
-            ASSETS_DIR + PLAYER_CANNON,
-            {
-                frameWidth: 30,
-                frameHeight: 27,
-            },
-        );
+        const sprite32 = {
+            frameWidth: 32,
+            frameHeight: 32,
+        };
+
+        load.spritesheet(P_PORTHOLE, P_SPRITES + P_PORTHOLE, sprite32);
+        load.spritesheet(P_SPACESHIP, P_SPRITES + P_SPACESHIP, sprite32);
+
+        const sprite2 = {
+            frameWidth: 2,
+            frameHeight: 2,
+        };
+
+        load.spritesheet(P_EXHAUST, P_SPRITES + P_EXHAUST, sprite2);
     }
 
     create() {
-        const { physics, input, make, anims } = this.scene;
+        const { physics, input, make, add } = this.scene;
 
-        anims.create({
-            key: FIRE_ANIM_FIRE,
-            frames: anims.generateFrameNumbers(PLAYER_CANNON, { frames: [1, 2, 3, 4] }),
-            frameRate: 10,
+        this.portholeSprite = make.sprite({key: P_PORTHOLE}); // todo почему-то сдвинут вверх на 1 пиксель
+        this.spaceshipSprite = make.sprite({key: P_SPACESHIP});
+        this.exhaustSprite = make.sprite({key: P_EXHAUST});
+
+        this.height = this.spaceshipSprite.height;
+        this.width = this.spaceshipSprite.width;
+
+        this.exhaustEmitter = add.particles(0, this.height / 2, P_EXHAUST, {
+            frame: Phaser.Math.Between(0, 2),
+            lifespan: { min: 100, max: 300 },
+            angle: { min: 80, max: 100 },
+            speed: 40,
+            frequency: 15,
+            x: [-4, 4],
         });
 
-        anims.create({
-            key: FIRE_ANIM_END,
-            frames: anims.generateFrameNumbers(PLAYER_CANNON, { frames: [5, 6, 0] }),
-            frameRate: 10,
-        });
-
-        this.fireDuration = anims.get(FIRE_ANIM_FIRE).duration;
-
-        this.cannonSprite = make.sprite({key: PLAYER_CANNON, y: -4});
-        this.playerSprite = make.sprite({key: PLAYER});
-        this.add([this.cannonSprite, this.playerSprite]);
-
-        this.height = this.playerSprite.height;
-        this.width = this.playerSprite.width;
+        this.add([this.portholeSprite, this.spaceshipSprite, this.exhaustEmitter]);
 
         physics.add.existing(this, false);
 
         if (input.keyboard) {
             this.inputs = input.keyboard.createCursorKeys();
-            this.inputs.fire = input.keyboard.addKey('space');
         }
 
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
+
+        this.spaceshipSprite.setTint(new Phaser.Display.Color().random(50).color);
+        this.portholeSprite.preFX?.addColorMatrix()?.hue(Phaser.Math.RND.pick([0, 100, 200]));
     }
 
     update() {
         const body = this.body as Phaser.Physics.Arcade.Body;
         body.setVelocity(0);
+        this.spaceshipSprite.setFrame(0);
+        this.portholeSprite.setFrame(0);
 
         if (this.inputs) {
-            if (this.inputs.left.isDown) body.setVelocityX(-PLAYER_VELOCITY);
-            else if (this.inputs.right.isDown) body.setVelocityX(PLAYER_VELOCITY);
+            if (this.inputs.left.isDown) {
+                body.setVelocityX(-this.speed);
+                this.spaceshipSprite.setFrame(1);
+                this.portholeSprite.setFrame(1);
 
-            if (this.inputs.up.isDown) body.setVelocityY(-PLAYER_VELOCITY);
-            else if (this.inputs.down.isDown) body.setVelocityY(PLAYER_VELOCITY);
+            } else if (this.inputs.right.isDown) {
+                body.setVelocityX(this.speed);
+                this.spaceshipSprite.setFrame(2);
+                this.portholeSprite.setFrame(2);
+            }
 
-            if (this.inputs.fire?.isDown && !this.isFiring) this.fire();
-        }
-    }
+            if (this.inputs.up.isDown) {
+                body.setVelocityY(-this.speed);
+                this.exhaustEmitter.frequency = 5;
 
-    fire() {
-        if (this.inputs?.fire?.isDown) {
-            this.isFiring = true;
+            } else if (this.inputs.down.isDown) {
+                body.setVelocityY(this.speed);
+                this.exhaustEmitter.frequency = 25;
 
-            this.cannonSprite.anims.playAfterRepeat(FIRE_ANIM_FIRE, 0);
-
-            const leftBullet = new Bullet(this.scene, this.x - 10, this.y)
-            leftBullet.create();
-            this.scene.add.existing(leftBullet);
-
-            this.scene.time.addEvent({
-                delay: 100,
-                callback: () => {
-                    const rightBullet = new Bullet(this.scene, this.x + 10, this.y)
-                    rightBullet.create();
-                    this.scene.add.existing(rightBullet);
-                },
-                loop: false,
-            });
-
-            this.scene.time.addEvent({
-                delay: this.fireDuration,
-                callback: this.fire,
-                callbackScope: this,
-                loop: false,
-            });
-
-        } else if (this.isFiring) {
-            this.isFiring = false;
-            this.cannonSprite.anims.playAfterRepeat(FIRE_ANIM_END, 0);
+            } else {
+                this.exhaustEmitter.frequency = 15
+            }
         }
     }
 }
