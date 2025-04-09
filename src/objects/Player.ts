@@ -50,11 +50,12 @@ export class Player extends Phaser.GameObjects.Container {
 
         this.exhaustEmitter = add.particles(0, this.height / 2, P_EXHAUST, {
             frame: Phaser.Math.Between(0, 2),
-            lifespan: { min: 100, max: 300 },
+            lifespan: { min: 200, max: 300 },
             angle: { min: 80, max: 100 },
             speed: 40,
             frequency: 15,
             x: [-4, 4],
+            alpha: {start: 1, end: 0}
         });
 
         this.add([this.portholeSprite, this.spaceshipSprite, this.exhaustEmitter]);
