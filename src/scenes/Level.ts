@@ -1,6 +1,7 @@
 import { Scene } from "phaser";
 import { Background } from "../objects/Background.ts";
 import { Player } from "../objects/Player.ts";
+import {Bullet} from "../objects/Bullet.ts";
 
 export class Level extends Scene {
     protected readonly name: string = 'level';
@@ -15,6 +16,7 @@ export class Level extends Scene {
     preload() {
         Background.preload(this);
         Player.preload(this);
+        Bullet.preload(this);
     }
 
     create() {

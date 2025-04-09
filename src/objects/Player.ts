@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import {Bullet} from "./Bullet.ts";
 
 const P_SPACESHIP = 'spaceship-white.png';
 const P_PORTHOLE = 'porthole-blue.png';
@@ -11,9 +12,13 @@ export class Player extends Phaser.GameObjects.Container {
 
     protected exhaustEmitter: Phaser.GameObjects.Particles.ParticleEmitter;
 
-    protected inputs?: Phaser.Types.Input.Keyboard.CursorKeys;
+    protected inputs?: Phaser.Types.Input.Keyboard.CursorKeys & { fire: Phaser.Input.Keyboard.Key };
 
     protected speed = 200;
+
+    protected isFiring = false;
+    protected fireInterval = 100;
+    protected firingTimer: Phaser.Time.TimerEvent;
 
     constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, []);
@@ -39,7 +44,7 @@ export class Player extends Phaser.GameObjects.Container {
     }
 
     create() {
-        const { physics, input, make, add } = this.scene;
+        const { physics, input, make, add, time } = this.scene;
 
         this.portholeSprite = make.sprite({key: P_PORTHOLE}); // todo почему-то сдвинут вверх на 1 пиксель
         this.spaceshipSprite = make.sprite({key: P_SPACESHIP});
@@ -63,13 +68,19 @@ export class Player extends Phaser.GameObjects.Container {
         physics.add.existing(this, false);
 
         if (input.keyboard) {
-            this.inputs = input.keyboard.createCursorKeys();
+            this.inputs = {
+                ...input.keyboard.createCursorKeys(),
+                fire: input.keyboard.addKey('space'),
+            };
         }
 
         (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true);
 
         this.spaceshipSprite.setTint(new Phaser.Display.Color().random(50).color);
         this.portholeSprite.preFX?.addColorMatrix()?.hue(Phaser.Math.RND.pick([0, 100, 200]));
+
+        // инициализация позже, см this.startFire()
+        this.firingTimer = time.addEvent({ paused: true });
     }
 
     update() {
@@ -101,6 +112,35 @@ export class Player extends Phaser.GameObjects.Container {
             } else {
                 this.exhaustEmitter.frequency = 15
             }
+
+            if (this.inputs.fire.isDown && !this.isFiring) this.startFire()
         }
+    }
+
+    protected startFire() {
+        this.isFiring = true;
+        this.firingTimer.reset({
+            delay: this.fireInterval,
+            callback: this.fire,
+            callbackScope: this,
+            loop: true,
+            paused: false,
+        });
+    }
+
+    fire() {
+        if (!this.inputs?.fire?.isDown) {
+            this.isFiring = false;
+            this.firingTimer.paused = true;
+            return;
+        }
+
+        const leftBullet = new Bullet(this.scene, this.x - 11, this.y)
+        leftBullet.create();
+        this.scene.add.existing(leftBullet);
+
+        const rightBullet = new Bullet(this.scene, this.x + 11, this.y)
+        rightBullet.create();
+        this.scene.add.existing(rightBullet);
     }
 }

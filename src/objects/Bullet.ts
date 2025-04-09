@@ -1,36 +1,34 @@
 import {Scene} from "phaser";
 
-const BULLET = 'bullet.png'
-const BULLET_SPEED = 400;
-const BULLET_ANIM = 'bullet';
+const P_BULLET = 'bullet-white.png'
 
 export class Bullet extends Phaser.GameObjects.Sprite {
+    protected static speed = 400;
 
     constructor(scene: Scene, x: number, y: number) {
-        super(scene, x, y, BULLET);
+        super(scene, x, y, P_BULLET);
     }
 
     static preload(scene: Scene) {
         const { load } = scene;
 
         load.spritesheet(
-            BULLET,
-            ASSETS_DIR + BULLET,
-            {
-                frameWidth: 10,
-                frameHeight: 17,
-            },
+            P_BULLET,
+            P_SPRITES + P_BULLET,
+            { frameWidth: 8, frameHeight: 8 },
         );
     }
 
     create() {
-        const { physics, anims } = this.scene;
+        this.width = this.width/2;
+
+        const { physics } = this.scene;
 
         physics.add.existing(this, false);
 
         const body = (this.body as Phaser.Physics.Arcade.Body);
 
-        body.setVelocityY(-BULLET_SPEED);
+        body.setVelocityY(-Bullet.speed);
         body.collideWorldBounds = true;
         body.onWorldBounds = true;
         body.setBoundsRectangle(new Phaser.Geom.Rectangle(
@@ -40,16 +38,10 @@ export class Bullet extends Phaser.GameObjects.Sprite {
             physics.world.bounds.height + this.height,
         ));
 
-        if (!anims.exists(BULLET_ANIM)) {
-            anims.create({
-                key: BULLET_ANIM,
-                frames: anims.generateFrameNumbers(BULLET, { frames: [0, 1, 2, 3] }),
-                frameRate: 5,
-                repeat: -1,
-            });
-        }
+        body.setSize(this.width, this.height)
+            .setOffset(2, 0);
 
-        this.play(BULLET_ANIM);
+        this.setTint(Phaser.Display.Color.GetColor(0, 200, 255));
     }
 
     onWorldBounds() {
