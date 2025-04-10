@@ -21,6 +21,7 @@ export class Background extends Phaser.GameObjects.Layer {
     create() {
         const { cameras, add } = this.scene;
 
+        // set velocity to images?
         this.add([
             add.image(cameras.main.width / 2, cameras.main.height, BG_STARS).setOrigin(.5, 1),
             add.image(cameras.main.width / 2, cameras.main.height, BG_DUST).setOrigin(.5, 1),

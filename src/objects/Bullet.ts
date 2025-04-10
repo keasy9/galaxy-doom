@@ -16,7 +16,7 @@ export class Bullet extends Phaser.GameObjects.Sprite {
         load.spritesheet(
             P_BULLET,
             P_SPRITES + P_BULLET,
-            { frameWidth: 8, frameHeight: 8 },
+            { frameWidth: 16, frameHeight: 16 },
         );
 
         const colors = [
@@ -50,8 +50,7 @@ export class Bullet extends Phaser.GameObjects.Sprite {
             physics.world.bounds.height + this.height,
         ));
 
-        body.setSize(this.width, this.height)
-            .setOffset(2, 0);
+        body.setSize(4, 8).setOffset(6, 4);
 
         this.setTint(Bullet.color);
     }
