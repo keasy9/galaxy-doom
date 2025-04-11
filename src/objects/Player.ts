@@ -46,7 +46,7 @@ export class Player extends Phaser.GameObjects.Container {
     create() {
         const { physics, input, make, add, time } = this.scene;
 
-        this.portholeSprite = make.sprite({key: P_PORTHOLE}); // todo почему-то сдвинут вверх на 1 пиксель
+        this.portholeSprite = make.sprite({key: P_PORTHOLE});
         this.spaceshipSprite = make.sprite({key: P_SPACESHIP});
         this.exhaustSprite = make.sprite({key: P_EXHAUST});
 
