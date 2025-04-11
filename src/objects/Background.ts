@@ -57,7 +57,7 @@ export class Background extends Phaser.GameObjects.Layer {
             {
                 original: dust,
                 copy: dustCopy,
-                moveBy: .1,
+                moveBy: .2,
             },
             {
                 original: planets,

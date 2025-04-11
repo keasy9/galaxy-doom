@@ -59,7 +59,7 @@ export class Player extends Phaser.GameObjects.Container {
             angle: { min: 80, max: 100 },
             speed: 40,
             frequency: 15,
-            x: [-4, 4],
+            x: [-4, -5, 4, 5],
             alpha: {start: 1, end: 0}
         });
 

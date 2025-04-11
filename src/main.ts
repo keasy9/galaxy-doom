@@ -5,6 +5,10 @@ import './declare.d.ts';
 
 const GAME_WIDTH = 420;
 const GAME_HEIGHT = window.innerHeight / (window.innerWidth / GAME_WIDTH);
+/**
+ * todo спрайты, текстуры и всё остальное движется не плавно, а попиксельно. Но возможно это и не проблема, а только кажется ею
+ *  - пробовал увеличить размер игры и задать камере зум, нет никакой разницы
+ */
 
 const config: Types.Core.GameConfig = {
     type: AUTO,
@@ -12,7 +16,6 @@ const config: Types.Core.GameConfig = {
     backgroundColor: '#000',
     disableContextMenu: true,
     pixelArt: true,
-    roundPixels: true,
     scale: {
         mode: Scale.WIDTH_CONTROLS_HEIGHT,
         autoCenter: Scale.CENTER_BOTH,
@@ -26,6 +29,9 @@ const config: Types.Core.GameConfig = {
             debugShowVelocity: false,
             debugBodyColor: 0xffffff,
         },
+    },
+    fps: {
+        target: 60,
     },
     scene: [Level],
 };
