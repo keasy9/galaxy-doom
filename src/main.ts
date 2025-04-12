@@ -1,15 +1,8 @@
 import { AUTO, Game, Scale,Types } from 'phaser';
-import { Level } from "./scenes/Level.ts";
+import {GAME_FPS, GAME_HEIGHT, GAME_WIDTH} from "./const.ts";
+import {Level} from "./scenes/level/Level.ts";
 
-import './declare.d.ts';
-
-const GAME_WIDTH = 420;
-const GAME_HEIGHT = window.innerHeight / (window.innerWidth / GAME_WIDTH);
-/**
- * todo спрайты, текстуры и всё остальное движется не плавно, а попиксельно. Но возможно это и не проблема, а только кажется ею
- *  - пробовал увеличить размер игры и задать камере зум, нет никакой разницы
- */
-
+// todo фиксированное разрешение игры, а под экран подстраивать камеру
 const config: Types.Core.GameConfig = {
     type: AUTO,
     parent: 'game-container',
@@ -31,7 +24,7 @@ const config: Types.Core.GameConfig = {
         },
     },
     fps: {
-        target: 60,
+        target: GAME_FPS,
     },
     scene: [Level],
 };
