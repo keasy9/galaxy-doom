@@ -11,7 +11,7 @@ export class Explosion extends Phaser.GameObjects.Sprite {
         if (!scene.anims.exists(ANIM_EXPLOSION)) {
             scene.anims.create({
                 key: ANIM_EXPLOSION,
-                frames: scene.anims.generateFrameNumbers(P_EXPLOSION, {frames: [1, 2, 3, 4]}),
+                frames: scene.anims.generateFrameNumbers(P_EXPLOSION, {frames: [0, 1, 2, 3]}),
                 frameRate: 10,
                 repeat: 0,
             });
