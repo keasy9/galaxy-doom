@@ -1,13 +1,17 @@
+import * as Phaser from "phaser";
 import {Scene} from "phaser";
 import {P_SPRITES} from "../const.ts";
-import {SceneWithCollisions} from "../scenes/level/Level.ts";
-import {CollisionGroup} from "../scenes/level/CollisionManager.ts";
+import {SceneWithCollisions} from "../scenes/Level.ts";
+import {CollisionGroup} from "../utils/managers/CollisionManager.ts";
+import {IRecyclable} from "./interfaces/IRecyclable.ts";
+import {Pool, PoolManager} from "../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
+import Body = Phaser.Physics.Arcade.Body;
 
 const P_BULLET = 'bullet-white.png'
 const ANIM_BULLET_DIE = 'bullet-die';
 
-export class Bullet extends Phaser.GameObjects.Sprite {
+export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
     protected static speed = 400;
     protected static color: number;
 
@@ -75,28 +79,50 @@ export class Bullet extends Phaser.GameObjects.Sprite {
         Bullet.color = Phaser.Display.Color.GetColor(...Phaser.Math.RND.pick(colors));
     }
 
-    destroy(anim: boolean = false, fromScene?: boolean) {
+    die(anim: boolean = false) {
         const body = (this.body as Phaser.Physics.Arcade.Body);
 
-        body.destroy();
+        body.setVelocity(0);
 
         if (anim) {
-            body.setVelocity(0);
             this.play(ANIM_BULLET_DIE);
             this.scene.time.addEvent({
                 delay: this.scene.anims.get(ANIM_BULLET_DIE).duration,
-                callback: () => this.destroy(fromScene),
+                callback: () => PoolManager.return(Pool.bullets, this),
             });
 
         } else {
-            super.destroy(fromScene);
+            PoolManager.return(Pool.bullets, this)
         }
     }
 
     takeDamage(_: number): boolean
     {
-        this.destroy(true);
+        this.die(true);
 
         return true;
+    }
+
+    recycle(...args: [number?, number?, boolean?]): IRecyclable {
+        let [x, y, isFromPlayer] = args;
+        isFromPlayer ??= true;
+
+        if (x) this.x = x;
+        if (y) this.y = y;
+
+        this.scene.collisions.remove(
+            this as GameObjectWithBody,
+            isFromPlayer ? CollisionGroup.enemy : CollisionGroup.player
+        );
+
+        this.scene.collisions.add(
+            this as GameObjectWithBody,
+            isFromPlayer ? CollisionGroup.player : CollisionGroup.enemy
+        );
+
+        (this.body as Body).setVelocityY(-Bullet.speed);
+        this.setFrame(0);
+
+        return this;
     }
 }

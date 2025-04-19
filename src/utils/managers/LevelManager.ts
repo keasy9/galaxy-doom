@@ -1,7 +1,7 @@
 import { Scene } from "phaser";
 import { P_LEVELS } from "../../const.ts";
-import { TWaveData, WaveController } from "./WaveController.ts";
-import {WaveFactory, EnemyType} from "../../objects/enemy/WaveFactory.ts";
+import { TWaveData, WaveManager } from "./WaveManager.ts";
+import {WaveFactory, EnemyType} from "../factories/WaveFactory.ts";
 
 export type LevelData = {
     waves: TWaveData[];
@@ -9,7 +9,7 @@ export type LevelData = {
 
 export class LevelManager {
     protected levelData: LevelData;
-    protected controller?: WaveController;
+    protected controller?: WaveManager;
 
     constructor(protected scene: Scene, protected currentLevel: number = 1) { }
 
@@ -41,6 +41,6 @@ export class LevelManager {
     }
 
     startLevel() {
-        this.controller = new WaveController(this.scene, this.levelData.waves);
+        this.controller = new WaveManager(this.scene, this.levelData.waves);
     }
 }

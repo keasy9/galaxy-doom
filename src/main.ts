@@ -1,6 +1,6 @@
 import { AUTO, Game, Scale,Types } from 'phaser';
 import {GAME_FPS, GAME_HEIGHT, GAME_WIDTH} from "./const.ts";
-import {Level} from "./scenes/level/Level.ts";
+import {Level} from "./scenes/Level.ts";
 
 // todo фиксированное разрешение игры, а под экран подстраивать камеру
 const config: Types.Core.GameConfig = {

@@ -1,10 +1,10 @@
 import {Scene} from "phaser";
-import {Enemy} from "./Enemy.ts";
+import {SimpleEnemy} from "../../objects/enemies/SimpleEnemy.ts";
 import {P_SPRITES} from "../../const.ts";
-import {EnemyMovementSystem, TMovementParams} from "./EnemyMovementSystem.ts";
-import {EnemyWave} from "./EnemyWave.ts";
-import {EnemyFormationSystem, FormationPattern, TWavePosition} from "./EnemyFormationSystem.ts";
-import {SceneWithCollisions} from "../../scenes/level/Level.ts";
+import {EnemyMovementSystem, TMovementParams} from "../systems/EnemyMovementSystem.ts";
+import {EnemyWave} from "../../objects/EnemyWave.ts";
+import {EnemyFormationSystem, FormationPattern, TWavePosition} from "../systems/EnemyFormationSystem.ts";
+import {SceneWithCollisions} from "../../scenes/Level.ts";
 
 export enum EnemyType {
     fighter = 'fighter',
@@ -46,16 +46,16 @@ export class WaveFactory {
             .setVisible(false);
 
         // 2) определяем тип врага
-        let enemyType: typeof Enemy;
+        let enemyType: typeof SimpleEnemy;
         switch (data.enemyType) {
             case EnemyType.fighter:
-                enemyType = Enemy;
+                enemyType = SimpleEnemy;
                 break;
         }
 
         // 3) создаём врагов и добавляем их к волне
         for (let i = 0; i < data.count; i++) {
-            const enemy: Enemy = new enemyType(scene as SceneWithCollisions, 0, 0, 'fighter-enemy-sprite');
+            const enemy: SimpleEnemy = new enemyType(scene as SceneWithCollisions, 0, 0, 'fighter-enemy-sprite');
             enemy.play('fighter-enemy-anim');
             enemy.setVisible(true);
             enemy.addToDisplayList();

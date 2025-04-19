@@ -1,9 +1,10 @@
 import {Bullet} from "./Bullet.ts";
-import {Level, SceneWithCollisions} from "../scenes/level/Level.ts";
+import {Level, SceneWithCollisions} from "../scenes/Level.ts";
 import {P_SPRITES} from "../const.ts";
-import {CollisionGroup} from "../scenes/level/CollisionManager.ts";
-import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
+import {CollisionGroup} from "../utils/managers/CollisionManager.ts";
 import {Explosion} from "./Explosion.ts";
+import {Pool, PoolManager} from "../utils/managers/PoolManager.ts";
+import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
 
 const P_SPACESHIP = 'spaceship-white.png';
 const P_PORTHOLE = 'porthole-blue.png';
@@ -146,8 +147,8 @@ export class Player extends Phaser.GameObjects.Container {
             return;
         }
 
-        this.scene.add.existing(new Bullet(this.scene as SceneWithCollisions, this.x - 11, this.y));
-        this.scene.add.existing(new Bullet(this.scene as SceneWithCollisions, this.x + 11, this.y));
+        PoolManager.get(Pool.bullets, this.x - 11, this.y)
+        PoolManager.get(Pool.bullets, this.x + 11, this.y)
     }
 
     takeDamage(damage: number): boolean {

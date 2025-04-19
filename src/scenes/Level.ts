@@ -1,10 +1,11 @@
-import { Scene } from "phaser";
-import { Background } from "../../objects/Background.ts";
-import { Player } from "../../objects/Player.ts";
-import { Bullet } from "../../objects/Bullet.ts";
-import { LevelManager } from "./LevelManager.ts";
-import {CollisionManager} from "./CollisionManager.ts";
-import {Explosion} from "../../objects/Explosion.ts";
+import {Scene} from "phaser";
+import {Background} from "../objects/Background.ts";
+import {Player} from "../objects/Player.ts";
+import {Bullet} from "../objects/Bullet.ts";
+import {LevelManager} from "../utils/managers/LevelManager.ts";
+import {CollisionManager} from "../utils/managers/CollisionManager.ts";
+import {Explosion} from "../objects/Explosion.ts";
+import {PoolManager} from "../utils/managers/PoolManager.ts";
 
 export type SceneWithCollisions = Scene & {
     collisions: CollisionManager;
@@ -19,6 +20,7 @@ export class Level extends Scene {
     constructor(key: string = 'name') {
         super(key);
         this.levelManager = new LevelManager(this);
+        PoolManager.init(this);
     }
 
     preload() {

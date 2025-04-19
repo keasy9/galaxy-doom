@@ -1,7 +1,8 @@
 import {GAME_FPS} from "../../const.ts";
 import {Bullet} from "../../objects/Bullet.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
-import {SceneWithCollisions} from "./Level.ts";
+import {SceneWithCollisions} from "../../scenes/Level.ts";
+import {Pool, PoolManager} from "./PoolManager.ts";
 
 export enum CollisionGroup {
     player = 'player',
@@ -32,8 +33,12 @@ export class CollisionManager {
         this.groups[type].add(object);
     }
 
+    public remove(object: GameObjectWithBody, type: CollisionGroup) {
+        this.groups[type].remove(object);
+    }
+
     protected handleBounds(body: Phaser.Physics.Arcade.Body) {
-        if (body.gameObject instanceof Bullet) body.gameObject.destroy();
+        if (body.gameObject instanceof Bullet) PoolManager.return(Pool.bullets, body.gameObject);
     }
 
     protected handlePlayerEnemyCollision(player: GameObjectWithBody, enemy: GameObjectWithBody) {

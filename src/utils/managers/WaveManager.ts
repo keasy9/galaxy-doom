@@ -1,8 +1,8 @@
 import {Scene} from "phaser";
-import {TMovementParams} from "../../objects/enemy/EnemyMovementSystem.ts";
-import {WaveFactory, EnemyType} from "../../objects/enemy/WaveFactory.ts";
+import {TMovementParams} from "../systems/EnemyMovementSystem.ts";
+import {WaveFactory, EnemyType} from "../factories/WaveFactory.ts";
 import {EVENT_WAVE_COMPLETE} from "../../const.ts";
-import {EnemyWave} from "../../objects/enemy/EnemyWave.ts";
+import {EnemyWave} from "../../objects/EnemyWave.ts";
 
 enum FormationPattern {
     grid = 'grid',
@@ -78,7 +78,7 @@ interface SequenceWave extends WaveData {
 
 export type TWaveData = FormationWave | SequenceWave;
 
-export class WaveController {
+export class WaveManager {
     protected currentWave: EnemyWave;
     protected currentWaveNumber: number;
 
