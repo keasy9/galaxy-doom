@@ -1,7 +1,7 @@
 import Group = Phaser.GameObjects.Group;
 import {Scene} from "phaser";
-import {Bullet} from "../../objects/Bullet.ts";
-import {SimpleEnemy} from "../../objects/enemies/SimpleEnemy.ts";
+import {Bullet} from "../../objects/game/Bullet.ts";
+import {Enemy} from "../../objects/game/Enemy.ts";
 import {IRecyclable} from "../../objects/interfaces/IRecyclable.ts";
 import Body = Phaser.Physics.Arcade.Body;
 
@@ -45,7 +45,7 @@ export class PoolManager {
                     object = new Bullet(this.scene, ...params);
                     break;
                 case Pool.enemies:
-                    object = new SimpleEnemy(this.scene, ...params);
+                    object = new Enemy(this.scene, ...params);
                     break;
             }
 

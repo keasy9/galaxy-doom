@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import {P_TEXTURES} from "../const.ts";
+import {P_TEXTURES} from "../../scenes/Boot.ts";
 
 const P_STARS = 'bg_stars.png';
 const P_DUST = 'bg_dust.png';

@@ -2,7 +2,7 @@ import {Scene} from "phaser";
 import {TMovementParams} from "../systems/EnemyMovementSystem.ts";
 import {WaveFactory, EnemyType} from "../factories/WaveFactory.ts";
 import {EVENT_WAVE_COMPLETE} from "../../const.ts";
-import {EnemyWave} from "../../objects/EnemyWave.ts";
+import {EnemyWave} from "../../objects/game/EnemyWave.ts";
 
 enum FormationPattern {
     grid = 'grid',

@@ -1,10 +1,9 @@
-import {Bullet} from "./Bullet.ts";
-import {Level, SceneWithCollisions} from "../scenes/Level.ts";
-import {P_SPRITES} from "../const.ts";
-import {CollisionGroup} from "../utils/managers/CollisionManager.ts";
+import {Level, SceneWithCollisions} from "../../scenes/Level.ts";
+import {CollisionGroup} from "../../utils/managers/CollisionManager.ts";
 import {Explosion} from "./Explosion.ts";
-import {Pool, PoolManager} from "../utils/managers/PoolManager.ts";
+import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
+import {P_SPRITES} from "../../scenes/Boot.ts";
 
 const P_SPACESHIP = 'spaceship-white.png';
 const P_PORTHOLE = 'porthole-blue.png';

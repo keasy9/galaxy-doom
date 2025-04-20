@@ -1,7 +1,7 @@
-import {EnemyMovementSystem, TMovementParams} from "../utils/systems/EnemyMovementSystem.ts";
-import {EVENT_WAVE_COMPLETE, GAME_HEIGHT, GAME_WIDTH} from "../const.ts";
+import {EnemyMovementSystem, TMovementParams} from "../../utils/systems/EnemyMovementSystem.ts";
+import {EVENT_WAVE_COMPLETE, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
 import {Scene} from "phaser";
-import {SimpleEnemy} from "./enemies/SimpleEnemy.ts";
+import {Enemy} from "./Enemy.ts";
 import * as Phaser from "phaser";
 
 /**
@@ -18,7 +18,7 @@ export class EnemyWave extends Phaser.GameObjects.Container {
 
     protected waveIndex: number = 0;
 
-    constructor(scene: Scene, enemies: SimpleEnemy[] = []) {
+    constructor(scene: Scene, enemies: Enemy[] = []) {
         super(scene, 0, 0, enemies);
 
         this.width = GAME_WIDTH;
@@ -42,8 +42,8 @@ export class EnemyWave extends Phaser.GameObjects.Container {
 
             if (this.movementParams) {
 
-                EnemyMovementSystem.applyMovement(enemy as SimpleEnemy, this.movementParams, this.precomputedMovement);
-                if (EnemyMovementSystem.isOutOfBounds(enemy as SimpleEnemy, this.movementParams)) {
+                EnemyMovementSystem.applyMovement(enemy as Enemy, this.movementParams, this.precomputedMovement);
+                if (EnemyMovementSystem.isOutOfBounds(enemy as Enemy, this.movementParams)) {
                     enemy.destroy();
                 }
             }

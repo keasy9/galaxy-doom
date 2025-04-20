@@ -1,5 +1,5 @@
 import {Scene} from "phaser";
-import {P_SPRITES} from "../const.ts";
+import {P_SPRITES} from "../../scenes/Boot.ts";
 
 const P_EXPLOSION = 'explosion.png';
 const ANIM_EXPLOSION = 'anim_explosion';

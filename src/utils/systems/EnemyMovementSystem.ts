@@ -1,4 +1,4 @@
-import {SimpleEnemy} from "../../objects/enemies/SimpleEnemy.ts";
+import {Enemy} from "../../objects/game/Enemy.ts";
 import {ENEMY_EDGE_OFFSET, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
 
 enum MovementPatternType {
@@ -45,7 +45,7 @@ export class EnemyMovementSystem {
         return params;
     }
 
-    static isOutOfBounds(enemy: SimpleEnemy, params: TMovementParams): boolean {
+    static isOutOfBounds(enemy: Enemy, params: TMovementParams): boolean {
         if (params.angle > 225 || params.angle <= 315) { // вниз
             return enemy.y > GAME_HEIGHT + ENEMY_EDGE_OFFSET;
 
@@ -60,7 +60,7 @@ export class EnemyMovementSystem {
         }
     }
 
-    static applyRotate(enemy: SimpleEnemy, params: TMovementParams): void {
+    static applyRotate(enemy: Enemy, params: TMovementParams): void {
         enemy.angle = params.angle;
     }
 
@@ -93,7 +93,7 @@ export class EnemyMovementSystem {
         precomputedParams['perpAngle'] = params.angleRad + Math.PI/2;
     }
 
-    static applyMovement(enemy: SimpleEnemy, params: TMovementParams, precomputedParams: Record<string, any>): void {
+    static applyMovement(enemy: Enemy, params: TMovementParams, precomputedParams: Record<string, any>): void {
         switch (params.pattern) {
             case MovementPatternType.linear:
                 return this.applyLinearMovement(enemy, params, precomputedParams);
@@ -102,12 +102,12 @@ export class EnemyMovementSystem {
         }
     }
 
-    protected static applyLinearMovement(enemy: SimpleEnemy, _: LinearMovementParams, precomputedParams: Record<string, any>): void {
+    protected static applyLinearMovement(enemy: Enemy, _: LinearMovementParams, precomputedParams: Record<string, any>): void {
         enemy.x += precomputedParams['vx'] * enemy.scene.game.loop.delta;
         enemy.y += precomputedParams['vy'] * enemy.scene.game.loop.delta;
     }
 
-    protected static applySineMovement(enemy: SimpleEnemy, params: SineMovementParams, precomputedParams: Record<string, any>): void {
+    protected static applySineMovement(enemy: Enemy, params: SineMovementParams, precomputedParams: Record<string, any>): void {
         // смещение по синусоиде
         const waveOffset =
             Math.sin(enemy.scene.game.loop.time * params.frequency)

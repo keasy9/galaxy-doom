@@ -1,5 +1,5 @@
-import {EnemyWave} from "../../objects/EnemyWave.ts";
-import {SimpleEnemy} from "../../objects/enemies/SimpleEnemy.ts";
+import {EnemyWave} from "../../objects/game/EnemyWave.ts";
+import {Enemy} from "../../objects/game/Enemy.ts";
 import {ENEMY_EDGE_OFFSET, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
 
 enum ScreenPositionPreset {
@@ -27,7 +27,7 @@ export class EnemyFormationSystem {
         position = this.normalizePosition(position);
 
         wave.list.forEach((object, index) => {
-            const enemy = object as SimpleEnemy;
+            const enemy = object as Enemy;
             enemy.setPosition(position.x, position.y);
             enemy.setActive(false);
             enemy.scene.time.addEvent({
@@ -64,8 +64,8 @@ export class EnemyFormationSystem {
         spacing: number,
     ): void {
         // todo учитывать угол
-        const enemyWidth = (wave.first as SimpleEnemy).width;
-        const enemyHeight = (wave.first as SimpleEnemy).height;
+        const enemyWidth = (wave.first as Enemy).width;
+        const enemyHeight = (wave.first as Enemy).height;
 
         const gridCellWidth = enemyWidth + spacing;
         const gridWidth = GAME_WIDTH - ENEMY_EDGE_OFFSET * 2;
@@ -99,7 +99,7 @@ export class EnemyFormationSystem {
         let endIndex = wave.length + 1;
         let indexOffset = 1;
         if (hasCenter) {
-            const centerEnemy = wave.first as SimpleEnemy
+            const centerEnemy = wave.first as Enemy
             centerEnemy.x = position.x;
             centerEnemy.y = position.y;
 
@@ -108,7 +108,7 @@ export class EnemyFormationSystem {
         }
 
         for (let i = 1; i < endIndex; i++) {
-            const enemy = wave.list[i - indexOffset] as SimpleEnemy;
+            const enemy = wave.list[i - indexOffset] as Enemy;
 
             const row = Math.ceil(i / 2);
             const isLeftBranch = i % 2 !== 0;
@@ -131,12 +131,12 @@ export class EnemyFormationSystem {
         if (!hasCenter) {
             const offset = spacing / 2;
             wave.list.forEach((enemy, i) => {
-                (enemy as SimpleEnemy).y += offset;
+                (enemy as Enemy).y += offset;
                 if (i % 2 === 0) {
                     // правая ветка
-                    (enemy as SimpleEnemy).x += spacing;
+                    (enemy as Enemy).x += spacing;
                 } else {
-                    (enemy as SimpleEnemy).x -= spacing;
+                    (enemy as Enemy).x -= spacing;
                 }
             });
         }

@@ -1,12 +1,12 @@
 import * as Phaser from "phaser";
 import {Scene} from "phaser";
-import {P_SPRITES} from "../const.ts";
-import {SceneWithCollisions} from "../scenes/Level.ts";
-import {CollisionGroup} from "../utils/managers/CollisionManager.ts";
-import {IRecyclable} from "./interfaces/IRecyclable.ts";
-import {Pool, PoolManager} from "../utils/managers/PoolManager.ts";
+import {SceneWithCollisions} from "../../scenes/Level.ts";
+import {CollisionGroup} from "../../utils/managers/CollisionManager.ts";
+import {IRecyclable} from "../interfaces/IRecyclable.ts";
+import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
 import Body = Phaser.Physics.Arcade.Body;
+import {P_SPRITES} from "../../scenes/Boot.ts";
 
 const P_BULLET = 'bullet-white.png'
 const ANIM_BULLET_DIE = 'bullet-die';

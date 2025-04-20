@@ -1,9 +1,3 @@
-const P_ASSETS = 'assets/';
-const P_SPRITES = P_ASSETS + 'sprites/';
-const P_TEXTURES = P_ASSETS + 'textures/';
-const P_DATA = P_ASSETS + 'data/';
-const P_LEVELS = P_DATA + 'levels/';
-
 const GAME_WIDTH = 420;
 const GAME_HEIGHT = window.innerHeight / (window.innerWidth / GAME_WIDTH);
 const GAME_FPS = 60;
@@ -16,12 +10,6 @@ const COLLIDER_PLAYER = 1;
 const COLLIDER_ENEMY = 2;
 
 export {
-    P_ASSETS,
-    P_SPRITES,
-    P_TEXTURES,
-    P_DATA,
-    P_LEVELS,
-
     GAME_WIDTH,
     GAME_HEIGHT,
     GAME_FPS,

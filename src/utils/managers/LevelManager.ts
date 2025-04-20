@@ -1,7 +1,7 @@
-import { Scene } from "phaser";
-import { P_LEVELS } from "../../const.ts";
-import { TWaveData, WaveManager } from "./WaveManager.ts";
+import {Scene} from "phaser";
+import {TWaveData, WaveManager} from "./WaveManager.ts";
 import {WaveFactory, EnemyType} from "../factories/WaveFactory.ts";
+import {P_LEVELS} from "../../scenes/Boot.ts";
 
 export type LevelData = {
     waves: TWaveData[];
@@ -11,7 +11,8 @@ export class LevelManager {
     protected levelData: LevelData;
     protected controller?: WaveManager;
 
-    constructor(protected scene: Scene, protected currentLevel: number = 1) { }
+    constructor(protected scene: Scene, protected currentLevel: number = 1) {
+    }
 
     loadLevel(startAfterLoad: boolean = false) {
         const levelLoader = new Phaser.Loader.LoaderPlugin(this.scene);

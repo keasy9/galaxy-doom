@@ -1,7 +1,7 @@
 import {SceneWithCollisions} from "../../scenes/Level.ts";
 import {CollisionGroup} from "../../utils/managers/CollisionManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
-import {Explosion} from "../Explosion.ts";
+import {Explosion} from "./Explosion.ts";
 import {IRecyclable} from "../interfaces/IRecyclable.ts";
 import * as Phaser from "phaser";
 import * as Phaser from "phaser";
@@ -11,7 +11,7 @@ import * as Phaser from "phaser";
  *
  * Инициализирует своё физическое тело, имеет здоровье и может получать урон.
  */
-export class SimpleEnemy extends Phaser.GameObjects.Sprite implements IRecyclable{
+export class Enemy extends Phaser.GameObjects.Sprite implements IRecyclable{
     public readonly damage = 1000;
     protected health = 100;
 
