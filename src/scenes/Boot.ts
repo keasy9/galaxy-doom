@@ -141,6 +141,7 @@ export class Boot extends Scene {
     }
 
     protected nextScene() {
+        SoundManager.stopAll();
         this.scene.start('menu');
     }
 
