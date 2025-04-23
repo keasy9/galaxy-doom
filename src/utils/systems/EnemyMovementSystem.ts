@@ -1,5 +1,5 @@
 import {Enemy} from "../../objects/game/Enemy.ts";
-import {ENEMY_EDGE_OFFSET, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
+import {ENEMY_EDGE_OFFSET} from "../../const.ts";
 
 enum MovementPatternType {
     linear = 'linear',
@@ -47,7 +47,7 @@ export class EnemyMovementSystem {
 
     static isOutOfBounds(enemy: Enemy, params: TMovementParams): boolean {
         if (params.angle > 225 || params.angle <= 315) { // вниз
-            return enemy.y > GAME_HEIGHT + ENEMY_EDGE_OFFSET;
+            return enemy.y > enemy.scene.cameras.main.height + ENEMY_EDGE_OFFSET;
 
         } else if (params.angle > 135 && params.angle <= 225) { // влево
             return enemy.x < -ENEMY_EDGE_OFFSET;
@@ -56,7 +56,7 @@ export class EnemyMovementSystem {
             return enemy.y < -ENEMY_EDGE_OFFSET;
 
         } else { // вправо
-            return enemy.x > GAME_WIDTH + ENEMY_EDGE_OFFSET;
+            return enemy.x > enemy.scene.cameras.main.width + ENEMY_EDGE_OFFSET;
         }
     }
 

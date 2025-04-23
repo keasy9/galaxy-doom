@@ -1,9 +1,20 @@
 import { AUTO, Game, Scale,Types } from 'phaser';
-import {GAME_FPS, GAME_HEIGHT, GAME_WIDTH} from "./const.ts";
 import {Level} from "./scenes/Level.ts";
 import {Boot} from "./scenes/Boot.ts";
 import {Menu} from "./scenes/Menu.ts";
 import {Gui} from "./scenes/Gui.ts";
+
+const TARGET_GAME_RESOLUTION = 420;
+let gameWidth, gameHeight;
+if (window.innerWidth > window.innerHeight) {
+    gameWidth = 420;
+    gameHeight = window.innerHeight / (window.innerWidth / TARGET_GAME_RESOLUTION);
+} else {
+    gameHeight = 420;
+    gameWidth = window.innerWidth / (window.innerHeight / TARGET_GAME_RESOLUTION);
+}
+
+export const GAME_FPS = 60;
 
 // todo фиксированное разрешение игры, а под экран подстраивать камеру
 const config: Types.Core.GameConfig = {
@@ -15,8 +26,8 @@ const config: Types.Core.GameConfig = {
     scale: {
         mode: Scale.FIT,
         autoCenter: Scale.CENTER_BOTH,
-        width: GAME_WIDTH,
-        height: GAME_HEIGHT,
+        width: gameWidth,
+        height: gameHeight,
     },
     physics: {
         default: 'arcade',

@@ -1,8 +1,8 @@
-import {GAME_FPS} from "../../const.ts";
 import {Bullet} from "../../objects/game/Bullet.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
 import {SceneWithCollisions} from "../../scenes/Level.ts";
 import {Pool, PoolManager} from "./PoolManager.ts";
+import {GAME_FPS} from "../../main.ts";
 
 export enum CollisionGroup {
     player = 'player',

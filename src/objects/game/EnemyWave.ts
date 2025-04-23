@@ -1,5 +1,5 @@
 import {EnemyMovementSystem, TMovementParams} from "../../utils/systems/EnemyMovementSystem.ts";
-import {EVENT_WAVE_COMPLETE, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
+import {EVENT_WAVE_COMPLETE} from "../../const.ts";
 import {Scene} from "phaser";
 import {Enemy} from "./Enemy.ts";
 import * as Phaser from "phaser";
@@ -21,8 +21,8 @@ export class EnemyWave extends Phaser.GameObjects.Container {
     constructor(scene: Scene, enemies: Enemy[] = []) {
         super(scene, 0, 0, enemies);
 
-        this.width = GAME_WIDTH;
-        this.height = GAME_HEIGHT;
+        this.width = scene.cameras.main.width;
+        this.height = scene.cameras.main.height;
 
         this.addToUpdateList();
         this.addToDisplayList();

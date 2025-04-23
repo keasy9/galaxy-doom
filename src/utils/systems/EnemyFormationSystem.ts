@@ -1,6 +1,6 @@
 import {EnemyWave} from "../../objects/game/EnemyWave.ts";
 import {Enemy} from "../../objects/game/Enemy.ts";
-import {ENEMY_EDGE_OFFSET, GAME_HEIGHT, GAME_WIDTH} from "../../const.ts";
+import {ENEMY_EDGE_OFFSET} from "../../const.ts";
 
 enum ScreenPositionPreset {
     topCenter = 'topCenter',
@@ -24,7 +24,7 @@ export enum FormationPattern {
  */
 export class EnemyFormationSystem {
     public static waveToSequence(wave: EnemyWave, position: TWavePosition, delay: number): void {
-        position = this.normalizePosition(position);
+        position = this.normalizePosition(position, wave.scene.cameras.main);
 
         wave.list.forEach((object, index) => {
             const enemy = object as Enemy;
@@ -43,7 +43,7 @@ export class EnemyFormationSystem {
         formationType: FormationPattern,
         spacing: number,
     ): void {
-        position = this.normalizePosition(position);
+        position = this.normalizePosition(position, wave.scene.cameras.main);
 
         switch (formationType) {
             case FormationPattern.grid:
@@ -68,7 +68,7 @@ export class EnemyFormationSystem {
         const enemyHeight = (wave.first as Enemy).height;
 
         const gridCellWidth = enemyWidth + spacing;
-        const gridWidth = GAME_WIDTH - ENEMY_EDGE_OFFSET * 2;
+        const gridWidth = wave.scene.cameras.main.width - ENEMY_EDGE_OFFSET * 2;
         const itemsInRow = Phaser.Math.FloorTo(gridWidth / gridCellWidth);
         const cellHeight = enemyHeight + spacing;
 
@@ -150,16 +150,16 @@ export class EnemyFormationSystem {
         // todo
     }
 
-    protected static normalizePosition(position: TWavePosition): TPoint {
+    protected static normalizePosition(position: TWavePosition, camera: Phaser.Cameras.Scene2D.Camera): TPoint {
         if (typeof position === 'object') return position;
 
         switch (position) {
             case ScreenPositionPreset.topCenter:
-                return {x: GAME_WIDTH / 2, y: -ENEMY_EDGE_OFFSET};
+                return {x: camera.width / 2, y: -ENEMY_EDGE_OFFSET};
             case ScreenPositionPreset.bottomLeft:
-                return {x: -ENEMY_EDGE_OFFSET, y: GAME_HEIGHT + ENEMY_EDGE_OFFSET};
+                return {x: -ENEMY_EDGE_OFFSET, y: camera.height + ENEMY_EDGE_OFFSET};
             case ScreenPositionPreset.bottomRight:
-                return {x: GAME_WIDTH + ENEMY_EDGE_OFFSET, y: GAME_HEIGHT + ENEMY_EDGE_OFFSET};
+                return {x: camera.width + ENEMY_EDGE_OFFSET, y: camera.height + ENEMY_EDGE_OFFSET};
         }
     }
 }

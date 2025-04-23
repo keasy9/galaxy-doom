@@ -3,7 +3,6 @@ import {Scene} from "phaser";
 import {Bullet} from "../../objects/game/Bullet.ts";
 import {Enemy} from "../../objects/game/Enemy.ts";
 import {IRecyclable} from "../../objects/interfaces/IRecyclable.ts";
-import Body = Phaser.Physics.Arcade.Body;
 
 export enum Pool {
     bullets = 'bullets',

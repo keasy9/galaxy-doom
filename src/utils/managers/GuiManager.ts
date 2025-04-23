@@ -1,6 +1,5 @@
 import {Scene} from "phaser";
 import {Progressbar} from "../../objects/gui/Progressbar.ts";
-import {GAME_WIDTH} from "../../const.ts";
 import BitmapText = Phaser.GameObjects.BitmapText;
 
 export enum Font {
@@ -25,9 +24,11 @@ export class GuiManager {
         color: number,
         bgColor: number|null = null,
         height: number = 25,
-        width: number = GAME_WIDTH * .7,
+        width: number|null = null,
         progress: number = 0,
     ): Progressbar {
+        width ??= this.scene.cameras.main.width * .7;
+
         return new Progressbar(this.scene, x, y, height, width, color, progress, bgColor);
     }
 

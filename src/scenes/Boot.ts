@@ -3,6 +3,8 @@ import {Font, FontSize, GuiManager} from "../utils/managers/GuiManager.ts";
 import {Progressbar} from "../objects/gui/Progressbar.ts";
 import BitmapText = Phaser.GameObjects.BitmapText;
 import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
+import {TEXTURE_MENU_BG} from "./Menu.ts";
+import {Translator} from "../utils/managers/Translator.ts";
 
 export const P_ASSETS = '/assets/';
 export const P_SPRITES = P_ASSETS + 'sprites/';
@@ -12,6 +14,7 @@ export const P_LEVELS = P_DATA + 'levels/';
 export const P_FONTS = P_ASSETS + 'fonts/';
 export const P_AUDIO = P_ASSETS + 'audio/';
 export const P_SOUNDS = P_AUDIO + 'sounds/';
+export const P_LANGS = P_DATA + 'langs/';
 
 export class Boot extends Scene {
     protected progressBar?: Progressbar;
@@ -45,18 +48,27 @@ export class Boot extends Scene {
         // cоздаём прогрессбар
         this.createProgressbar();
 
-        // загружаем ассеты
-        this.load.bitmapFont(Font.main, P_FONTS + 'press-start-2p.png', P_FONTS + 'press-start-2p.xml');
-        this.load.audio(Sound.sfx_intro_coin, P_SOUNDS + 'coin.mp3');
-        this.load.audio(Sound.sfx_intro_power, P_SOUNDS + 'power.mp3');
-        this.load.audio(Sound.sfx_intro_rainbow, P_SOUNDS + 'rainbow.mp3');
-        this.load.audio('todo_remove', P_SOUNDS + 'remove.mp3');
-        this.load.audio('todo_remove2', P_SOUNDS + 'remove2.mp3');
+        // шрифт
+        this.load.bitmapFont(Font.main, `${P_FONTS}press-start-2p.png`, `${P_FONTS}press-start-2p.xml`);
+
+        // звуки для интро
+        this.load.audio(Sound.sfx_intro_coin, `${P_SOUNDS}coin.mp3`);
+        this.load.audio(Sound.sfx_intro_power, `${P_SOUNDS}power.mp3`);
+        this.load.audio(Sound.sfx_intro_rainbow, `${P_SOUNDS}rainbow.mp3`);
+
+        // фон главного меню
+        this.load.image(TEXTURE_MENU_BG, `${P_TEXTURES}menu_bg.png`);
+
+        // текущий язык + запасной
+        this.load.json(`lang-${Translator.current}`, `${P_LANGS}${Translator.current}.json`);
+        if (Translator.current !== Translator.fallback) {
+            this.load.json(`lang-${Translator.fallback}`, `${P_LANGS}${Translator.fallback}.json`);
+        }
 
         // обновляем прогрессбар при загрузке
         this.load.on('progress', this.updateProgressbar.bind(this));
 
-        this.load.on('filecomplete-bitmapfont-' + Font.main, () => {
+        this.load.on(`filecomplete-bitmapfont-${Font.main}`, () => {
             // когда шрифт загрузился - пишем проценты
             this.progressText = GuiManager.text(
                 this.cameras.main.centerX,
@@ -114,7 +126,7 @@ export class Boot extends Scene {
                             ease: 'Cubic',
                             onComplete: this.showNextTextPart.bind(this),
                         });
-                    }
+                    },
                 });
             }
         });
@@ -134,22 +146,32 @@ export class Boot extends Scene {
 
         if (this.progressText) {
             // обновляем текст, если он есть
-            this.progressText.setText(`${Math.round(value * 100)}%`);
+            this.progressText.setText(Math.round(value * 100) + '%');
         } else {
             this.progress = value;
         }
     }
 
-    protected nextScene() {
-        SoundManager.stopAll();
-        this.scene.start('menu');
+    protected nextScene(transition: number = 200) {
+        // Сохраняем ссылку на текущую сцену
+        const currentScene = this;
+
+        // Останавливаем все звуки с плавным затуханием
+        SoundManager.stopAll(transition - 100);
+
+        // Запускаем fadeOut и сразу подписываемся на событие завершения
+        this.cameras.main.once('camerafadeoutcomplete', () => {
+            currentScene.scene.start('menu');
+            currentScene.scene.get('menu').cameras.main.fadeIn(100);
+        });
+
+        this.cameras.main.fadeOut(transition - 100);
     }
 
     protected showNextTextPart() {
         if (this.currentTextPartIndex >= this.textParts.length) {
             // если прошли все части, переходим к следующей сцене
-            SoundManager.stopAll(2000);
-            this.time.delayedCall(2000, this.nextScene.bind(this));
+            this.nextScene(2000);
             return;
 
         } else if (this.currentTextPartIndex === this.textParts.length - 1) {
