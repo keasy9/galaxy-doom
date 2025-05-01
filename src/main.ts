@@ -1,7 +1,7 @@
-import { AUTO, Game, Scale,Types } from 'phaser';
+import {AUTO, Game, Scale, Types} from 'phaser';
 import {Level} from "./scenes/Level.ts";
 import {Boot} from "./scenes/Boot.ts";
-import {Menu} from "./scenes/Menu.ts";
+import {Home} from "./scenes/Home.ts";
 import {Gui} from "./scenes/Gui.ts";
 
 const TARGET_GAME_RESOLUTION = 420;
@@ -16,7 +16,6 @@ if (window.innerWidth > window.innerHeight) {
 
 export const GAME_FPS = 60;
 
-// todo фиксированное разрешение игры, а под экран подстраивать камеру
 const config: Types.Core.GameConfig = {
     type: AUTO,
     parent: 'game-container',
@@ -37,10 +36,8 @@ const config: Types.Core.GameConfig = {
             debugBodyColor: 0xffffff,
         },
     },
-    fps: {
-        target: GAME_FPS,
-    },
-    scene: [Boot, Menu, Level, Gui],
+    fps: {target: GAME_FPS},
+    scene: [Boot, Home, Level, Gui],
 };
 
 export default new Game(config);

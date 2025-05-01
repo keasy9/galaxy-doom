@@ -1,10 +1,11 @@
 import {Scene} from "phaser";
-import {Font, FontSize, GuiManager} from "../utils/managers/GuiManager.ts";
+import {GuiColor, Font, FontSize, GuiFactory} from "../utils/factories/GuiFactory.ts";
 import {Progressbar} from "../objects/gui/Progressbar.ts";
 import BitmapText = Phaser.GameObjects.BitmapText;
 import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
-import {TEXTURE_MENU_BG} from "./Menu.ts";
+import {TEXTURE_MENU_BG} from "./Home.ts";
 import {Translator} from "../utils/managers/Translator.ts";
+import {Button} from "../objects/gui/Button.ts";
 
 export const P_ASSETS = '/assets/';
 export const P_SPRITES = P_ASSETS + 'sprites/';
@@ -18,7 +19,6 @@ export const P_LANGS = P_DATA + 'langs/';
 
 export class Boot extends Scene {
     protected progressBar?: Progressbar;
-    protected progressText?: BitmapText;
 
     protected progress: number = 0;
 
@@ -40,13 +40,19 @@ export class Boot extends Scene {
     constructor(key: string = 'boot') {
         super(key);
 
-        GuiManager.init(this);
+        GuiFactory.init(this);
         SoundManager.init(this);
     }
 
     preload() {
         // cоздаём прогрессбар
-        this.createProgressbar();
+        this.progressBar = GuiFactory.progressbar({
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.centerY,
+            color: GuiColor.blue,
+            bgColor: GuiColor.grayBlue,
+        });
+
 
         // шрифт
         this.load.bitmapFont(Font.main, `${P_FONTS}press-start-2p.png`, `${P_FONTS}press-start-2p.xml`);
@@ -66,49 +72,41 @@ export class Boot extends Scene {
         }
 
         // обновляем прогрессбар при загрузке
-        this.load.on('progress', this.updateProgressbar.bind(this));
+        this.load.on('progress', (value: number) => this.progressBar?.setProgress(value));
 
         this.load.on(`filecomplete-bitmapfont-${Font.main}`, () => {
             // когда шрифт загрузился - пишем проценты
-            this.progressText = GuiManager.text(
-                this.cameras.main.centerX,
-                this.cameras.main.centerY,
-                `${Math.round(this.progress * 100)}%`,
-                FontSize.medium,
-            );
+            this.progressBar?.printProgress(FontSize.medium);
         }, this);
     }
 
     create() {
         this.progressBar?.destroy();
-        this.progressText?.destroy();
         delete this.progressBar;
-        delete this.progressText;
 
         // любое действие пропускает анимацию
         this.input.on('pointerdown', this.nextScene.bind(this));
         this.input.on('keydown', this.nextScene.bind(this));
 
-        const made = GuiManager.text(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            'made ',
-            FontSize.medium,
-        );
+        const made = GuiFactory.text({
+            x: this.cameras.main.centerX,
+            y: this.cameras.main.centerY,
+            text: 'made ',
+            fontSize: FontSize.medium,
+        });
 
-        this.currentTextPart = GuiManager.text(
-            this.cameras.main.centerX + made.width/2,
-            this.cameras.main.centerY,
-            this.textParts[0],
-            FontSize.medium,
-        ).setAlpha(0);
+        this.currentTextPart = GuiFactory.text({
+            x: this.cameras.main.centerX + made.width / 2,
+            y: this.cameras.main.centerY,
+            text: this.textParts[0],
+            fontSize: FontSize.medium,
+        }).setAlpha(0);
 
-        this.previousTextPart = GuiManager.text(
-            this.cameras.main.centerX + made.width/2,
-            this.cameras.main.centerY - this.textOffset,
-            '',
-            FontSize.medium,
-        ).setAlpha(0);
+        this.previousTextPart = GuiFactory.text({
+            x: this.cameras.main.centerX + made.width / 2,
+            y: this.cameras.main.centerY - this.textOffset,
+            fontSize: FontSize.medium,
+        }).setAlpha(0);
 
         this.tweens.add({
             targets: this.progressBar,
@@ -121,7 +119,7 @@ export class Boot extends Scene {
                         // начинаем анимацию
                         this.tweens.add({
                             targets: made,
-                            x: `-=${this.currentTextPart.width/2}`,
+                            x: `-=${this.currentTextPart.width / 2}`,
                             duration: 1000,
                             ease: 'Cubic',
                             onComplete: this.showNextTextPart.bind(this),
@@ -130,26 +128,6 @@ export class Boot extends Scene {
                 });
             }
         });
-    }
-
-    protected createProgressbar() {
-        this.progressBar = GuiManager.progressbar(
-            this.cameras.main.centerX,
-            this.cameras.main.centerY,
-            0x2692f0,
-            0x91bccf,
-        );
-    }
-
-    protected updateProgressbar(value: number) {
-        this.progressBar?.setProgress(value);
-
-        if (this.progressText) {
-            // обновляем текст, если он есть
-            this.progressText.setText(Math.round(value * 100) + '%');
-        } else {
-            this.progress = value;
-        }
     }
 
     protected nextScene(transition: number = 200) {
@@ -207,7 +185,7 @@ export class Boot extends Scene {
             onComplete: this.showNextTextPart.bind(this),
         });
 
-        this.previousTextPart.setText(this.textParts[this.currentTextPartIndex-1] ?? '').setAlpha(1);
+        this.previousTextPart.setText(this.textParts[this.currentTextPartIndex - 1] ?? '').setAlpha(1);
         this.previousTextPart.y += this.textOffset;
 
         this.tweens.add({
