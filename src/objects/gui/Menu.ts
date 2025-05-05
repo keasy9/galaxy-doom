@@ -2,6 +2,7 @@ import Container = Phaser.GameObjects.Container;
 import {Scene} from "phaser";
 
 export class Menu extends Container {
+
     constructor(scene: Scene, x: number, y: number, public width: number) {
         super(scene, x, y);
         scene.add.existing(this);
@@ -19,14 +20,17 @@ export class Menu extends Container {
         return this;
     }
 
-    public align({elemsHeight, spacing = 10, padding = 0}: {
+    public align({elemsHeight = 25, spacing = 0, padding = 0}: {
         elemsHeight?: number,
         spacing?: number,
         padding?: number,
     } = {}): this {
+        let i = 0;
         this.each((elem: Container) => {
             elem.x += padding;
-            elem.setSize(this.width - padding * 2, elemsHeight ?? elem.height);
+            elem.setSize(this.width - padding * 2, elemsHeight);
+            elem.y = (elemsHeight + spacing) * i;
+            i++;
         });
 
         return this;

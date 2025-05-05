@@ -1,11 +1,10 @@
 import {Scene} from "phaser";
-import {GuiColor, Font, FontSize, GuiFactory} from "../utils/factories/GuiFactory.ts";
 import {Progressbar} from "../objects/gui/Progressbar.ts";
 import BitmapText = Phaser.GameObjects.BitmapText;
-import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
+import {Sound, SoundInstance, SoundManager} from "../utils/managers/SoundManager.ts";
 import {TEXTURE_MENU_BG} from "./Home.ts";
 import {Translator} from "../utils/managers/Translator.ts";
-import {Button} from "../objects/gui/Button.ts";
+import {Font, FontSize, GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
 
 export const P_ASSETS = '/assets/';
 export const P_SPRITES = P_ASSETS + 'sprites/';
@@ -31,6 +30,8 @@ export class Boot extends Scene {
         'by keasy9  ',
         'for fun    ',
     ];
+
+    protected currentSound: SoundInstance;
     protected soundParts = [
         Sound.sfx_intro_coin,
         Sound.sfx_intro_power,
@@ -61,6 +62,9 @@ export class Boot extends Scene {
         this.load.audio(Sound.sfx_intro_coin, `${P_SOUNDS}coin.mp3`);
         this.load.audio(Sound.sfx_intro_power, `${P_SOUNDS}power.mp3`);
         this.load.audio(Sound.sfx_intro_rainbow, `${P_SOUNDS}rainbow.mp3`);
+
+        // звуки для гуи
+        this.load.audio(Sound.sfx_short_glitch, `${P_SOUNDS}gui/short-glitch.mp3`);
 
         // фон главного меню
         this.load.image(TEXTURE_MENU_BG, `${P_TEXTURES}menu_bg.png`);
@@ -152,28 +156,13 @@ export class Boot extends Scene {
             this.nextScene(2000);
             return;
 
-        } else if (this.currentTextPartIndex === this.textParts.length - 1) {
-            // последняя часть переливается радугой
-            this.tweens.addCounter({
-                from: 0,
-                to: 360,
-                duration: 5000,
-                repeat: -1,
-                onUpdate: tween => {
-                    const value = tween.getValue();
-                    // преобразуем HSV в RGB (hue меняется от 0 до 360)
-                    const color = Phaser.Display.Color.HSLToColor(value / 360, 1, 0.5);
-                    this.currentTextPart.setTint(color.color);
-                }
-            });
-            SoundManager.setRate(0.5);
         }
 
         this.currentTextPart.setText(this.textParts[this.currentTextPartIndex]).setAlpha(0);
         this.currentTextPart.y += this.textOffset;
 
         if (this.soundParts[this.currentTextPartIndex]) {
-            SoundManager.play(this.soundParts[this.currentTextPartIndex]);
+            this.currentSound = SoundManager.play(this.soundParts[this.currentTextPartIndex]);
         }
 
         this.tweens.add({
@@ -198,5 +187,22 @@ export class Boot extends Scene {
         });
 
         this.currentTextPartIndex++;
+
+        if (this.currentTextPartIndex === this.textParts.length) {
+            // последняя часть переливается радугой
+            this.tweens.addCounter({
+                from: 0,
+                to: 360,
+                duration: 5000,
+                repeat: -1,
+                onUpdate: tween => {
+                    const value = tween.getValue();
+                    // преобразуем HSV в RGB (hue меняется от 0 до 360)
+                    const color = Phaser.Display.Color.HSLToColor(value / 360, 1, 0.5);
+                    this.currentTextPart.setTint(color.color);
+                }
+            });
+            this.currentSound.setRate(0.5);
+        }
     }
 }

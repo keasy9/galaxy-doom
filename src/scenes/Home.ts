@@ -1,6 +1,7 @@
 import {Scene} from "phaser";
-import {GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
+import {GuiManager} from "../utils/managers/GuiManager.ts";
 import {Menu} from '../objects/gui/Menu.ts';
+import {GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
 
 export const TEXTURE_MENU_BG = 'menu-bg';
 
@@ -12,6 +13,7 @@ export class Home extends Scene {
     }
 
     create() {
+        GuiManager.init(this);
         GuiFactory.init(this);
 
         this.input.enabled = true;
@@ -29,6 +31,11 @@ export class Home extends Scene {
                 onclick: () => this.scene.start('level'),
                 color: GuiColor.blue,
             }),
-        ).align({elemsHeight: 25});
+            GuiFactory.button({
+                text: 'settings',
+                onclick: () => console.log('settings'),
+                color: GuiColor.blue,
+            }),
+        ).align();
     }
 }

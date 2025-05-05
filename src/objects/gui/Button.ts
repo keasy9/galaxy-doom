@@ -1,15 +1,17 @@
 import {Scene} from "phaser";
 import BitmapText = Phaser.GameObjects.BitmapText;
 import Graphics = Phaser.GameObjects.Graphics;
-import Container = Phaser.GameObjects.Container;
 import Zone = Phaser.GameObjects.Zone;
-import TweenBuilderConfig = Phaser.Types.Tweens.TweenBuilderConfig;
+import {GuiManager} from "../../utils/managers/GuiManager.ts";
+import {Sound, SoundManager} from "../../utils/managers/SoundManager.ts";
+import {GuiElement} from "./GuiElement.ts";
+import {IFocusable} from "../interfaces/IFocusable.ts";
 import {GuiColor} from "../../utils/factories/GuiFactory.ts";
 
 /**
  * кнопка
  */
-export class Button extends Container {
+export class Button extends GuiElement implements IFocusable {
     protected texture: Graphics;
     protected hitbox: Zone;
 
@@ -37,8 +39,7 @@ export class Button extends Container {
         this.setSize(width, height);
 
         this.hitbox.on('pointerdown', this.onclick);
-        this.hitbox.on('pointerover', () => this.focus());
-        this.hitbox.on('pointerout', () => this.focus(false));
+        this.hitbox.on('pointerover', () => GuiManager.focus(this));
     }
 
     public destroy(): void {
@@ -68,14 +69,14 @@ export class Button extends Container {
         return this;
     }
 
-    public focus(focus: boolean = true): this {
-        if (this.focused === focus) return this;
-        this.focused = focus;
+    public focus(): this {
+        if (this.focused) return this;
+        this.focused = true;
 
-        const tween: TweenBuilderConfig = focus ? {
+        this.scene.tweens.add({
             targets: this.texture,
             duration: 50,
-            scaleX: 1.1,
+            scaleX: 1.05,
             scaleY: 0.1,
             x: 0,
             y: this.height / 2 - this.height * 0.05,
@@ -85,7 +86,18 @@ export class Button extends Container {
                 .clear()
                 .fillStyle(this.color)
                 .fillRect(0, 0, this.width, this.height)
-        } : {
+        });
+
+        SoundManager.play(Sound.sfx_short_glitch);
+
+        return this;
+    }
+
+    public blur(): this {
+        if (!this.focused) return this;
+        this.focused = false;
+
+        this.scene.tweens.add({
             targets: this.texture,
             duration: 50,
             scaleX: 1.2,
@@ -96,9 +108,9 @@ export class Button extends Container {
                 .clear()
                 .fillStyle(GuiColor.white)
                 .fillRect(this.width * -0.2, this.height / 2, this.width, this.height)
-        };
+        });
 
-        this.scene.tweens.add(tween);
+        SoundManager.play(Sound.sfx_short_glitch);
 
         return this;
     }
