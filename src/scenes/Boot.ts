@@ -153,9 +153,8 @@ export class Boot extends Scene {
     protected showNextTextPart() {
         if (this.currentTextPartIndex >= this.textParts.length) {
             // если прошли все части, переходим к следующей сцене
-            this.nextScene(2000);
+            this.nextScene(5000);
             return;
-
         }
 
         this.currentTextPart.setText(this.textParts[this.currentTextPartIndex]).setAlpha(0);
