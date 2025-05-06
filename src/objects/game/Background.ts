@@ -1,9 +1,9 @@
 import { Scene } from "phaser";
 import {P_TEXTURES} from "../../scenes/Boot.ts";
 
-const P_STARS = 'bg_stars.png';
-const P_DUST = 'bg_dust.png';
-const P_PLANETS = 'bg_planets.png';
+const P_STARS = 'bg-stars.png';
+const P_DUST = 'bg-dust.png';
+const P_PLANETS = 'bg-planets.png';
 
 type TImageData = {
     original: Phaser.GameObjects.Image,

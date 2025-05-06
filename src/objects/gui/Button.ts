@@ -35,8 +35,9 @@ export class Button extends GuiElement implements IFocusable {
 
         this.add([this.texture, this.text, this.hitbox]);
 
-        scene.add.existing(this);
         this.setSize(width, height);
+
+        GuiManager.addFocusable(this);
 
         this.hitbox.on('pointerdown', this.onclick);
         this.hitbox.on('pointerover', () => GuiManager.focus(this));
@@ -45,6 +46,7 @@ export class Button extends GuiElement implements IFocusable {
     public destroy(): void {
         this.text.destroy();
         this.texture.destroy();
+        GuiManager.removeFocusable(this);
         super.destroy();
     }
 

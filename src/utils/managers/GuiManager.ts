@@ -1,6 +1,7 @@
 import {Scene} from "phaser";
 import {IFocusable} from "../../objects/interfaces/IFocusable.ts";
 import KeyCodes = Phaser.Input.Keyboard.KeyCodes;
+import {GuiElement} from "../../objects/gui/GuiElement.ts";
 
 enum ElementSearchDirection {
     up = 'up',
@@ -70,5 +71,23 @@ export class GuiManager {
             element.focus();
             this.currentFocused = index;
         }
+    }
+
+    public static removeFocusable(element: IFocusable) {
+        const index = this.focusables.indexOf(element);
+        if (index !== -1) this.focusables.splice(index, 1);
+    }
+
+    public static flickerEffect(element: GuiElement): void {
+        this.scene.time.addEvent({
+            delay: 20,
+            callback: () => {
+                // 70% шанс
+                if (Math.random() > 0.3 && element.visible) {
+                    element.setAlpha(Phaser.Math.RND.pick([0.8, 0.85]));
+                }
+            },
+            loop: true
+        });
     }
 }

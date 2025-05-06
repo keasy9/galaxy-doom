@@ -12,6 +12,9 @@ export enum Sound {
 
     // гуи
     sfx_short_glitch = 'sfx_short_glitch',
+
+    // тема меню
+    loop_menu_theme = 'loop_menu_theme',
 }
 
 export type SoundInstance = WebAudioSound | HTML5AudioSound | NoAudioSound;
@@ -28,8 +31,8 @@ export class SoundManager {
         return (once ? this.scene.sound.get(key) : null) ?? this.scene.sound.add(key, config);
     }
 
-    public static play(key: Sound, once: boolean = true): SoundInstance {
-        const sound = this.get(key, once);
+    public static play(key: Sound, once: boolean = true, config: SoundConfig = {}): SoundInstance {
+        const sound = this.get(key, once, config);
         if (!sound.isPlaying) sound.play();
 
         return sound;

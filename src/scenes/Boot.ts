@@ -14,6 +14,7 @@ export const P_LEVELS = P_DATA + 'levels/';
 export const P_FONTS = P_ASSETS + 'fonts/';
 export const P_AUDIO = P_ASSETS + 'audio/';
 export const P_SOUNDS = P_AUDIO + 'sounds/';
+export const P_LOOPS = P_AUDIO + 'loops/';
 export const P_LANGS = P_DATA + 'langs/';
 
 export class Boot extends Scene {
@@ -67,7 +68,10 @@ export class Boot extends Scene {
         this.load.audio(Sound.sfx_short_glitch, `${P_SOUNDS}gui/short-glitch.mp3`);
 
         // фон главного меню
-        this.load.image(TEXTURE_MENU_BG, `${P_TEXTURES}menu_bg.png`);
+        this.load.image(TEXTURE_MENU_BG, `${P_TEXTURES}menu-bg.png`);
+
+        // музыка главного меню
+        this.load.audio(Sound.loop_menu_theme, `${P_LOOPS}menu-theme.mp3`);
 
         // текущий язык + запасной
         this.load.json(`lang-${Translator.current}`, `${P_LANGS}${Translator.current}.json`);

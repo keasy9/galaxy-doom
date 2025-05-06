@@ -3,7 +3,6 @@ import {Progressbar} from "../../objects/gui/Progressbar.ts";
 import BitmapText = Phaser.GameObjects.BitmapText;
 import {Menu} from "../../objects/gui/Menu.ts";
 import {Button} from "../../objects/gui/Button.ts";
-import {GuiManager} from "../managers/GuiManager.ts";
 
 export enum Font {
     main = 'font_press_start_2p'
@@ -86,9 +85,6 @@ export class GuiFactory {
             bitmapText = this.text(text);
         }
 
-        const button = new Button(this.scene, x, y, width, height, color, bitmapText!, onclick);
-        GuiManager.addFocusable(button);
-
-        return button;
+        return new Button(this.scene, x, y, width, height, color, bitmapText!, onclick);
     }
 }
