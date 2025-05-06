@@ -22,8 +22,10 @@ export type SoundInstance = WebAudioSound | HTML5AudioSound | NoAudioSound;
 export class SoundManager {
     protected static scene: Scene;
 
-    public static init(scene: Scene) {
+    public static init(scene: Scene): typeof SoundManager {
         this.scene = scene;
+
+        return this;
     }
 
     /**
@@ -71,15 +73,16 @@ export class SoundManager {
     /**
      * Появление всех звуков
      * @param duration
+     * @param toVolume
      */
-    public static fadeIn(duration: number): void {
+    public static fadeIn(duration: number, toVolume?: number): void {
         // запоминаем оригинальную громкость
-        const volume = this.scene.sound.volume;
+        toVolume ??= this.scene.sound.volume;
 
         this.scene.sound.setVolume(0);
         this.scene.tweens.add({
             targets: this.scene.sound,
-            volume: volume,
+            volume: toVolume,
             duration: duration,
         });
     }

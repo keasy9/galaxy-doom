@@ -16,11 +16,6 @@ export class Home extends Scene {
     }
 
     create() {
-        GuiManager.init(this);
-        GuiFactory.init(this);
-        Translator.init(this);
-        SceneManager.init(this);
-
         this.input.enabled = true;
 
         this.add.image(0, 0, TEXTURE_MENU_BG).setOrigin(0, 0);
@@ -45,24 +40,12 @@ export class Home extends Scene {
 
         GuiManager.flickerEffect(this.mainMenu);
 
-        const sound = SoundManager
-            .get(Sound.loop_menu_theme)
-            .setVolume(0)
-            .setLoop(true);
-
-        sound.play();
+        SoundManager.play(Sound.loop_menu_theme);
 
         this.tweens.add({
             targets: this.mainMenu,
             x: this.cameras.main.width - menuWidth,
             duration: 100,
-            onComplete: () => {
-                this.tweens.add({
-                    targets: sound,
-                    volume: 1,
-                    duration: 2000,
-                });
-            }
         });
     }
 }
