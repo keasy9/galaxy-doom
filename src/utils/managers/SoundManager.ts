@@ -19,7 +19,6 @@ export enum Sound {
 
 export type SoundInstance = WebAudioSound | HTML5AudioSound | NoAudioSound;
 
-// todo контроль кол-ва экземпляров тут, а не в phaser
 export class SoundManager {
     protected static scene: Scene;
 
@@ -27,10 +26,22 @@ export class SoundManager {
         this.scene = scene;
     }
 
+    /**
+     * Получить звук
+     * @param key
+     * @param once
+     * @param config
+     */
     public static get(key: Sound, once: boolean = true, config: SoundConfig = {}): SoundInstance {
         return (once ? this.scene.sound.get(key) : null) ?? this.scene.sound.add(key, config);
     }
 
+    /**
+     * Получить звук и сразу же проиграть его
+     * @param key
+     * @param once
+     * @param config
+     */
     public static play(key: Sound, once: boolean = true, config: SoundConfig = {}): SoundInstance {
         const sound = this.get(key, once, config);
         if (!sound.isPlaying) sound.play();
@@ -38,20 +49,45 @@ export class SoundManager {
         return sound;
     }
 
-    public static stopAll(fade?: number): void {
-        if (fade !== undefined) {
-            const volume = this.scene.sound.volume;
-            this.scene.tweens.add({
-                targets: this.scene.sound,
-                volume: 0,
-                duration: fade,
-                onComplete: () => {
-                    this.scene.sound.stopAll();
-                    this.scene.sound.setVolume(volume);
-                },
-            });
-        } else {
-            this.scene.sound.stopAll();
-        }
+    /**
+     * Затухание всех звуков
+     * @param duration
+     */
+    public static fadeOut(duration: number): void {
+        // запоминаем оригинальную громкость
+        const volume = this.scene.sound.volume;
+
+        this.scene.tweens.add({
+            targets: this.scene.sound,
+            volume: 0,
+            duration: duration,
+            onComplete: () => {
+                this.stopAll();
+                this.scene.sound.setVolume(volume);
+            },
+        });
+    }
+
+    /**
+     * Появление всех звуков
+     * @param duration
+     */
+    public static fadeIn(duration: number): void {
+        // запоминаем оригинальную громкость
+        const volume = this.scene.sound.volume;
+
+        this.scene.sound.setVolume(0);
+        this.scene.tweens.add({
+            targets: this.scene.sound,
+            volume: volume,
+            duration: duration,
+        });
+    }
+
+    /**
+     * Резкая остановка всех звуков
+     */
+    public static stopAll(): void {
+        this.scene.sound.stopAll();
     }
 }

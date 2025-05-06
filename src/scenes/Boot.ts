@@ -5,6 +5,7 @@ import {Sound, SoundInstance, SoundManager} from "../utils/managers/SoundManager
 import {TEXTURE_MENU_BG} from "./Home.ts";
 import {Translator} from "../utils/managers/Translator.ts";
 import {Font, FontSize, GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
+import {SceneManager} from "../utils/managers/SceneManager.ts";
 
 export const P_ASSETS = '/assets/';
 export const P_SPRITES = P_ASSETS + 'sprites/';
@@ -44,6 +45,7 @@ export class Boot extends Scene {
 
         GuiFactory.init(this);
         SoundManager.init(this);
+        SceneManager.init(this);
     }
 
     preload() {
@@ -93,8 +95,8 @@ export class Boot extends Scene {
         delete this.progressBar;
 
         // любое действие пропускает анимацию
-        this.input.on('pointerdown', this.nextScene.bind(this));
-        this.input.on('keydown', this.nextScene.bind(this));
+        this.input.on('pointerdown', () => SceneManager.fadeTo('home'));
+        this.input.on('keydown', () => SceneManager.fadeTo('home'));
 
         const made = GuiFactory.text({
             x: this.cameras.main.centerX,
@@ -138,26 +140,10 @@ export class Boot extends Scene {
         });
     }
 
-    protected nextScene(transition: number = 200) {
-        // Сохраняем ссылку на текущую сцену
-        const currentScene = this;
-
-        // Останавливаем все звуки с плавным затуханием
-        SoundManager.stopAll(transition - 100);
-
-        // Запускаем fadeOut и сразу подписываемся на событие завершения
-        this.cameras.main.once('camerafadeoutcomplete', () => {
-            currentScene.scene.start('menu');
-            currentScene.scene.get('menu').cameras.main.fadeIn(100);
-        });
-
-        this.cameras.main.fadeOut(transition - 100);
-    }
-
     protected showNextTextPart() {
         if (this.currentTextPartIndex >= this.textParts.length) {
             // если прошли все части, переходим к следующей сцене
-            this.nextScene(5000);
+            SceneManager.fadeTo('home', 5000, 100);
             return;
         }
 

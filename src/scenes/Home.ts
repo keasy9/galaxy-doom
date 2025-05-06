@@ -4,13 +4,14 @@ import {Menu} from '../objects/gui/Menu.ts';
 import {GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
 import {Translator} from "../utils/managers/Translator.ts";
 import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
+import {SceneManager} from "../utils/managers/SceneManager.ts";
 
 export const TEXTURE_MENU_BG = 'menu-bg';
 
 export class Home extends Scene {
     protected mainMenu: Menu;
 
-    constructor(key: string = 'menu') {
+    constructor(key: string = 'home') {
         super(key);
     }
 
@@ -18,6 +19,7 @@ export class Home extends Scene {
         GuiManager.init(this);
         GuiFactory.init(this);
         Translator.init(this);
+        SceneManager.init(this);
 
         this.input.enabled = true;
 
@@ -31,7 +33,7 @@ export class Home extends Scene {
         }).with(
             GuiFactory.button({
                 text: Translator.get('play'),
-                onclick: () => this.scene.start('level'),
+                onclick: () => SceneManager.fadeTo('level'),
                 color: GuiColor.blue,
             }),
             GuiFactory.button({
