@@ -2,7 +2,7 @@ import {Scene} from "phaser";
 import Container = Phaser.GameObjects.Container;
 import Graphics = Phaser.GameObjects.Graphics;
 import BitmapText = Phaser.GameObjects.BitmapText;
-import {FontSize, GuiFactory} from "../../utils/factories/GuiFactory.ts";
+import {FontSize} from "../../utils/factories/GuiFactory.ts";
 
 export class Progressbar extends Container {
     protected bar: Graphics;
@@ -49,7 +49,7 @@ export class Progressbar extends Container {
     }
 
     public printProgress(fontSize?: FontSize): this {
-        this.text = GuiFactory.text({x: this.x, y: this.y, text: Math.ceil(this.progress * 100) + '%', fontSize});
+        this.text = this.scene.gui.factory.text({x: this.x, y: this.y, text: Math.ceil(this.progress * 100) + '%', fontSize});
 
         return this;
     }

@@ -4,12 +4,14 @@ import {Player} from "../objects/game/Player.ts";
 import {Bullet} from "../objects/game/Bullet.ts";
 import {LevelManager} from "../utils/managers/LevelManager.ts";
 import {Explosion} from "../objects/game/Explosion.ts";
-
+import KeyCodes = Phaser.Input.Keyboard.KeyCodes;
 
 export class Level extends Scene {
     protected bg: Background;
     protected player: Player;
     protected levelManager: LevelManager;
+    protected isPaused: boolean = false;
+    protected togglingPause: boolean = false;
 
     constructor(key: string = 'level') {
         super(key);
@@ -32,9 +34,22 @@ export class Level extends Scene {
         this.player = this.add.existing(new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 30))
 
         this.levelManager.loadLevel(true);
+
+        this.input.keyboard?.addKey(KeyCodes.ESC).on('down', this.togglePause.bind(this));
     }
 
     update() {
         this.player.update();
+    }
+
+    public togglePause() {
+        if (this.togglingPause) return;
+        this.togglingPause = true;
+
+        if (this.isPaused) {
+
+        } else {
+
+        }
     }
 }

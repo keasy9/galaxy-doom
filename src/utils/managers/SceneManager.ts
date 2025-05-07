@@ -1,7 +1,5 @@
 import {SoundManager} from "./SoundManager.ts";
 import {Scene} from "phaser";
-import {GuiManager} from "./GuiManager.ts";
-import {GuiFactory} from "../factories/GuiFactory.ts";
 import {PoolManager} from "./PoolManager.ts";
 import {Translator} from "./Translator.ts";
 import {CollisionManager} from "./CollisionManager.ts";
@@ -60,8 +58,6 @@ export class SceneManager {
         // точно есть во всех сценах
         this.init(scene);
         SoundManager.init(scene);
-        GuiManager.init(scene);
-        GuiFactory.init(scene);
         Translator.init(scene);
 
         // специфичны для сцен. Потенциальная оптимизация
@@ -76,7 +72,6 @@ export class SceneManager {
      * @protected
      */
     protected static clearResourcesOnSceneChange(): typeof SceneManager {
-        GuiManager.clear();
         PoolManager.clear();
         CollisionManager.clear();
 

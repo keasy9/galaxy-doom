@@ -4,29 +4,42 @@ import BitmapText = Phaser.GameObjects.BitmapText;
 import {Menu} from "../../objects/gui/Menu.ts";
 import {Button} from "../../objects/gui/Button.ts";
 
+// Растровые шрифты
 export enum Font {
-    main = 'font_press_start_2p'
+    main = 'font_press_start_2p',
 }
 
+// Стандартизированные размеры шрифта
 export enum FontSize {
     default = 8,
     medium = 16,
 }
 
+// Стандартизированные цвета для элементов интерфейса
 export enum GuiColor {
     blue = 0x2692f0,
     grayBlue = 0x91bccf,
     white = 0xffffff,
 }
 
+/**
+ * Фабрика элементов интерфейса
+ */
 export class GuiFactory {
-    protected static scene: Scene;
+    constructor(protected scene: Scene) {}
 
-    public static init(scene: Scene) {
-        this.scene = scene;
-    }
-
-    public static progressbar({x, y, color, bgColor, height = 25, width, progress = 0}: {
+    /**
+     * Создать полосу прогресса
+     *
+     * @param x позиция по x
+     * @param y позиция по y
+     * @param color цвет полосы
+     * @param bgColor цвет фона. Если не задан, фон будет прозрачным
+     * @param height высота полосы
+     * @param width ширина полосы
+     * @param progress прогресс от 0 до 1. Автоматически выводится текстом в процентах
+     */
+    public progressbar({x, y, color, bgColor, height = 25, width, progress = 0}: {
         x: number,
         y: number,
         color: number,
@@ -40,7 +53,17 @@ export class GuiFactory {
         return new Progressbar(this.scene, x, y, height, width, color, progress, bgColor);
     }
 
-    public static text({x = 0, y = 0, text = '', fontSize = FontSize.default, font = Font.main, origin = 0.5}: {
+    /**
+     * Создать текст
+     *
+     * @param x позиция по x
+     * @param y позиция по y
+     * @param text текст (строка)
+     * @param fontSize размер шрифта
+     * @param font шрифт
+     * @param origin точка выравнивания
+     */
+    public text({x = 0, y = 0, text = '', fontSize = FontSize.default, font = Font.main, origin = 0.5}: {
         x?: number,
         y?: number,
         text?: string,
@@ -57,7 +80,14 @@ export class GuiFactory {
         ).setOrigin(origin);
     }
 
-    public static menu({x, y, width}: {
+    /**
+     * Создать меню - автоматически располагает элементы в колонку
+     *
+     * @param x позиция по x
+     * @param y позиция по y
+     * @param width ширина меню
+     */
+    public menu({x, y, width}: {
         x: number,
         y: number,
         width: number,
@@ -65,7 +95,18 @@ export class GuiFactory {
         return new Menu(this.scene, x, y, width);
     }
 
-    public static button({x = 0, y = 0, text, onclick, color, height = 0, width = 0}: {
+    /**
+     * Создать кнопку
+     *
+     * @param x позиция по x
+     * @param y позиция по y
+     * @param text текст кнопки
+     * @param onclick реакция на клик по кнопке
+     * @param color цвет кнопки
+     * @param height высота кнопки
+     * @param width ширина кнопки
+     */
+    public button({x = 0, y = 0, text, onclick, color, height = 0, width = 0}: {
         x?: number,
         y?: number,
         text: string | BitmapText | { text: string, font?: Font, fontSize?: FontSize },

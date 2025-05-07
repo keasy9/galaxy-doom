@@ -2,7 +2,7 @@ import {AUTO, Game, Scale, Types} from 'phaser';
 import {Level} from "./scenes/Level.ts";
 import {Boot} from "./scenes/Boot.ts";
 import {Home} from "./scenes/Home.ts";
-import {Gui} from "./scenes/Gui.ts";
+import {Gui} from "./scenes/plugins/Gui.ts";
 
 const TARGET_GAME_RESOLUTION = 420;
 let gameWidth, gameHeight;
@@ -37,7 +37,17 @@ const config: Types.Core.GameConfig = {
         },
     },
     fps: {target: GAME_FPS},
-    scene: [Boot, Home, Level, Gui],
+    scene: [Boot, Home, Level],
+    plugins: {
+        scene: [
+            {
+                key: 'GuiManager',
+                plugin: Gui,
+                mapping: 'gui',
+                start: true,
+            },
+        ],
+    },
 };
 
 export default new Game(config);

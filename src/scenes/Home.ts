@@ -1,7 +1,6 @@
 import {Scene} from "phaser";
-import {GuiManager} from "../utils/managers/GuiManager.ts";
 import {Menu} from '../objects/gui/Menu.ts';
-import {GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
+import {GuiColor} from "../utils/factories/GuiFactory.ts";
 import {Translator} from "../utils/managers/Translator.ts";
 import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
 import {SceneManager} from "../utils/managers/SceneManager.ts";
@@ -21,24 +20,24 @@ export class Home extends Scene {
         this.add.image(0, 0, TEXTURE_MENU_BG).setOrigin(0, 0);
 
         const menuWidth = Math.min(this.cameras.main.width / 3, 200);
-        this.mainMenu = GuiFactory.menu({
+        this.mainMenu = this.gui.factory.menu({
             x: this.cameras.main.width,
             y: this.cameras.main.height / 2,
             width: menuWidth,
         }).with(
-            GuiFactory.button({
+            this.gui.factory.button({
                 text: Translator.get('play'),
                 onclick: () => SceneManager.fadeTo('level'),
                 color: GuiColor.blue,
             }),
-            GuiFactory.button({
+            this.gui.factory.button({
                 text: Translator.get('settings'),
                 onclick: () => console.log('settings'),
                 color: GuiColor.blue,
             }),
         ).render();
 
-        GuiManager.flickerEffect(this.mainMenu);
+        this.gui.flickerEffect(this.mainMenu);
 
         SoundManager.play(Sound.loop_menu_theme);
 

@@ -53,12 +53,12 @@ export class Menu extends GuiElement {
             this.scene.add
                 .graphics()
                 .fillStyle(GuiColor.white)
-                .fillRect(-10, -6, this.width + 10, 3),
+                .fillRect(-10, -6, this.width + 20, 3),
 
             this.scene.add
                 .graphics()
                 .fillStyle(GuiColor.white)
-                .fillRect(-10, elemsHeight + 3, this.width + 10, 3),
+                .fillRect(-10, elemsHeight + 3, this.width + 20, 3),
         ];
 
         this.add(this.borders);

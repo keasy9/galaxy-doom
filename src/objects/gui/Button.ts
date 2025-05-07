@@ -2,7 +2,6 @@ import {Scene} from "phaser";
 import BitmapText = Phaser.GameObjects.BitmapText;
 import Graphics = Phaser.GameObjects.Graphics;
 import Zone = Phaser.GameObjects.Zone;
-import {GuiManager} from "../../utils/managers/GuiManager.ts";
 import {Sound, SoundManager} from "../../utils/managers/SoundManager.ts";
 import {GuiElement} from "./GuiElement.ts";
 import {IFocusable} from "../interfaces/IFocusable.ts";
@@ -37,16 +36,16 @@ export class Button extends GuiElement implements IFocusable {
 
         this.setSize(width, height);
 
-        GuiManager.addFocusable(this);
+        this.scene.gui.addFocusable(this);
 
         this.hitbox.on('pointerdown', this.onclick);
-        this.hitbox.on('pointerover', () => GuiManager.focus(this));
+        this.hitbox.on('pointerover', () => this.scene.gui.focus(this));
     }
 
     public destroy(): void {
         this.text.destroy();
         this.texture.destroy();
-        GuiManager.removeFocusable(this);
+        this.scene.gui.removeFocusable(this);
         super.destroy();
     }
 

@@ -4,7 +4,7 @@ import BitmapText = Phaser.GameObjects.BitmapText;
 import {Sound, SoundInstance, SoundManager} from "../utils/managers/SoundManager.ts";
 import {TEXTURE_MENU_BG} from "./Home.ts";
 import {Translator} from "../utils/managers/Translator.ts";
-import {Font, FontSize, GuiColor, GuiFactory} from "../utils/factories/GuiFactory.ts";
+import {Font, FontSize, GuiColor} from "../utils/factories/GuiFactory.ts";
 import {SceneManager} from "../utils/managers/SceneManager.ts";
 
 export const P_ASSETS = '/assets/';
@@ -43,20 +43,18 @@ export class Boot extends Scene {
     constructor(key: string = 'boot') {
         super(key);
 
-        GuiFactory.init(this);
         SoundManager.init(this);
         SceneManager.init(this);
     }
 
     preload() {
         // cоздаём прогрессбар
-        this.progressBar = GuiFactory.progressbar({
+        this.progressBar = this.gui.factory.progressbar({
             x: this.cameras.main.centerX,
             y: this.cameras.main.centerY,
             color: GuiColor.blue,
             bgColor: GuiColor.grayBlue,
         });
-
 
         // шрифт
         this.load.bitmapFont(Font.main, `${P_FONTS}press-start-2p.png`, `${P_FONTS}press-start-2p.xml`);
@@ -98,21 +96,21 @@ export class Boot extends Scene {
         this.input.on('pointerdown', () => SceneManager.fadeTo('home'));
         this.input.on('keydown', () => SceneManager.fadeTo('home'));
 
-        const made = GuiFactory.text({
+        const made = this.gui.factory.text({
             x: this.cameras.main.centerX,
             y: this.cameras.main.centerY,
             text: 'made ',
             fontSize: FontSize.medium,
         });
 
-        this.currentTextPart = GuiFactory.text({
+        this.currentTextPart = this.gui.factory.text({
             x: this.cameras.main.centerX + made.width / 2,
             y: this.cameras.main.centerY,
             text: this.textParts[0],
             fontSize: FontSize.medium,
         }).setAlpha(0);
 
-        this.previousTextPart = GuiFactory.text({
+        this.previousTextPart = this.gui.factory.text({
             x: this.cameras.main.centerX + made.width / 2,
             y: this.cameras.main.centerY - this.textOffset,
             fontSize: FontSize.medium,
