@@ -1,9 +1,10 @@
-import {Level, SceneWithCollisions} from "../../scenes/Level.ts";
-import {CollisionGroup} from "../../utils/managers/CollisionManager.ts";
+import {Level} from "../../scenes/Level.ts";
+import {CollisionGroup, CollisionManager} from "../../utils/managers/CollisionManager.ts";
 import {Explosion} from "./Explosion.ts";
 import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
 import {P_SPRITES} from "../../scenes/Boot.ts";
+import {Scene} from "phaser";
 
 const P_SPACESHIP = 'spaceship-white.png';
 const P_PORTHOLE = 'porthole-blue.png';
@@ -27,7 +28,7 @@ export class Player extends Phaser.GameObjects.Container {
     public readonly damage = 1000;
     protected health = 100;
 
-    constructor(scene: SceneWithCollisions, x: number, y: number) {
+    constructor(scene: Scene, x: number, y: number) {
         super(scene, x, y, []);
 
         const {physics, input, make, add, time} = scene;
@@ -59,7 +60,7 @@ export class Player extends Phaser.GameObjects.Container {
         }
 
         physics.add.existing(this, false);
-        scene.collisions.add(this as GameObjectWithBody, CollisionGroup.player);
+        CollisionManager.add(this as GameObjectWithBody, CollisionGroup.player);
 
         (this.body as Phaser.Physics.Arcade.Body)
             .setCircle(this.spaceshipSprite.width / 2)

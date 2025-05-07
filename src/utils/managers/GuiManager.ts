@@ -90,4 +90,11 @@ export class GuiManager {
             loop: true
         });
     }
+
+    public static clear(): typeof GuiManager {
+        this.focusables = [];
+        delete this.currentFocused;
+
+        return this;
+    }
 }

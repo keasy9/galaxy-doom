@@ -4,6 +4,7 @@ import {GuiManager} from "./GuiManager.ts";
 import {GuiFactory} from "../factories/GuiFactory.ts";
 import {PoolManager} from "./PoolManager.ts";
 import {Translator} from "./Translator.ts";
+import {CollisionManager} from "./CollisionManager.ts";
 
 export class SceneManager {
     protected static scene: Scene;
@@ -56,13 +57,16 @@ export class SceneManager {
      * @protected
      */
     protected static initManagersOnSceneChange(scene: Scene): typeof SceneManager {
+        // точно есть во всех сценах
         this.init(scene);
         SoundManager.init(scene);
         GuiManager.init(scene);
         GuiFactory.init(scene);
-        PoolManager.init(scene);
         Translator.init(scene);
-        // todo добавить остальных когда будут реализованы
+
+        // специфичны для сцен. Потенциальная оптимизация
+        PoolManager.init(scene);
+        CollisionManager.init(scene);
 
         return this;
     }
@@ -72,7 +76,9 @@ export class SceneManager {
      * @protected
      */
     protected static clearResourcesOnSceneChange(): typeof SceneManager {
-        // todo
+        GuiManager.clear();
+        PoolManager.clear();
+        CollisionManager.clear();
 
         return this;
     }

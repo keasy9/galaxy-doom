@@ -1,7 +1,6 @@
 import * as Phaser from "phaser";
 import {Scene} from "phaser";
-import {SceneWithCollisions} from "../../scenes/Level.ts";
-import {CollisionGroup} from "../../utils/managers/CollisionManager.ts";
+import {CollisionGroup, CollisionManager} from "../../utils/managers/CollisionManager.ts";
 import {IRecyclable} from "../interfaces/IRecyclable.ts";
 import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
@@ -17,7 +16,7 @@ export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
 
     public readonly damage = 40;
 
-    constructor(scene: SceneWithCollisions, x: number, y: number, isFromPlayer: boolean = true) {
+    constructor(scene: Scene, x: number, y: number, isFromPlayer: boolean = true) {
         super(scene, x, y, P_BULLET);
 
         const { physics, anims } = scene;
@@ -26,7 +25,7 @@ export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
 
         physics.add.existing(this, false);
 
-        scene.collisions.add(
+        CollisionManager.add(
             this as GameObjectWithBody,
             isFromPlayer ? CollisionGroup.player : CollisionGroup.enemy
         );
@@ -110,12 +109,12 @@ export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
         if (x) this.x = x;
         if (y) this.y = y;
 
-        this.scene.collisions.remove(
+        CollisionManager.remove(
             this as GameObjectWithBody,
             isFromPlayer ? CollisionGroup.enemy : CollisionGroup.player
         );
 
-        this.scene.collisions.add(
+        CollisionManager.add(
             this as GameObjectWithBody,
             isFromPlayer ? CollisionGroup.player : CollisionGroup.enemy
         );

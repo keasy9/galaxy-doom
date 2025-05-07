@@ -1,20 +1,26 @@
 import {Bullet} from "../../objects/game/Bullet.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
-import {SceneWithCollisions} from "../../scenes/Level.ts";
 import {Pool, PoolManager} from "./PoolManager.ts";
 import {GAME_FPS} from "../../main.ts";
+import {Scene} from "phaser";
 
 export enum CollisionGroup {
     player = 'player',
     enemy = 'enemy',
 }
+
 /**
  * Менеджер для обработки всех столкновений
  */
 export class CollisionManager {
-    protected groups: Record<string, Phaser.Physics.Arcade.Group> = {};
+    protected static groups: Record<string, Phaser.Physics.Arcade.Group> = {};
 
-    constructor(protected scene: SceneWithCollisions) {
+    /**
+     * Инициализация не только менеджера, но и физики
+     *
+     * @param scene
+     */
+    public static init(scene: Scene) {
         scene.physics.world.setFPS(GAME_FPS);
         scene.physics.world.on('worldBounds', this.handleBounds.bind(this));
 
@@ -29,20 +35,44 @@ export class CollisionManager {
         );
     }
 
-    public add(object: GameObjectWithBody, type: CollisionGroup) {
+    /**
+     * Добавить объект в физическую группу
+     *
+     * @param object
+     * @param type
+     */
+    public static add(object: GameObjectWithBody, type: CollisionGroup) {
         this.groups[type].add(object);
     }
 
-    public remove(object: GameObjectWithBody, type: CollisionGroup) {
+    /**
+     * Удалить объект из физической группы
+     *
+     * @param object
+     * @param type
+     */
+    public static remove(object: GameObjectWithBody, type: CollisionGroup) {
         this.groups[type].remove(object);
     }
 
-    protected handleBounds(body: Phaser.Physics.Arcade.Body) {
+    /**
+     * Обработка выхода за пределы мира
+     *
+     * @param body
+     * @protected
+     */
+    protected static handleBounds(body: Phaser.Physics.Arcade.Body) {
         if (body.gameObject instanceof Bullet) PoolManager.return(Pool.bullets, body.gameObject);
     }
 
-    protected handlePlayerEnemyCollision(player: GameObjectWithBody, enemy: GameObjectWithBody) {
-        // todo мб есть способ легче, например активировать тело врага только при попадании в экран
+    /**
+     * Обработка столкновения игрока и врагом
+     *
+     * @param player
+     * @param enemy
+     * @protected
+     */
+    protected static handlePlayerEnemyCollision(player: GameObjectWithBody, enemy: GameObjectWithBody) {
         if (!this.isVisible(player) || !this.isVisible(enemy)) return;
 
         const enemyDamage = enemy.damage ?? null;
@@ -56,7 +86,14 @@ export class CollisionManager {
         }
     }
 
-    protected isVisible(object) {
+    /**
+     * Проверка, видим ли объект
+     * todo отказаться в пользу включения/отключения тел
+     *
+     * @param object
+     * @protected
+     */
+    protected static isVisible(object) {
         const camera = object.scene.cameras.main;
 
         const bounds = new Phaser.Geom.Rectangle(
@@ -67,5 +104,15 @@ export class CollisionManager {
         );
 
         return Phaser.Geom.Intersects.RectangleToRectangle(camera.worldView, bounds);
+    }
+
+    public static clear(): typeof CollisionManager {
+        for (const [_, group] of Object.entries(this.groups)) {
+            group.destroy(true);
+        }
+
+        this.groups = {};
+
+        return this;
     }
 }

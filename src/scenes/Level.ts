@@ -3,24 +3,16 @@ import {Background} from "../objects/game/Background.ts";
 import {Player} from "../objects/game/Player.ts";
 import {Bullet} from "../objects/game/Bullet.ts";
 import {LevelManager} from "../utils/managers/LevelManager.ts";
-import {CollisionManager} from "../utils/managers/CollisionManager.ts";
 import {Explosion} from "../objects/game/Explosion.ts";
-import {PoolManager} from "../utils/managers/PoolManager.ts";
 
-export type SceneWithCollisions = Scene & {
-    collisions: CollisionManager;
-}
 
 export class Level extends Scene {
     protected bg: Background;
     protected player: Player;
     protected levelManager: LevelManager;
-    public readonly collisions: CollisionManager;
 
     constructor(key: string = 'level') {
         super(key);
-        this.levelManager = new LevelManager(this);
-        PoolManager.init(this);
     }
 
     preload() {
@@ -31,9 +23,9 @@ export class Level extends Scene {
     }
 
     create() {
-        this.collisions = new CollisionManager(this);
+        this.levelManager = new LevelManager(this);
 
-        // todo bg должен определяться уровнем
+        // todo должен определяться уровнем
         this.bg = this.add.existing(new Background(this))
         this.bg.create();
 

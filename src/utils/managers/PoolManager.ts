@@ -59,4 +59,14 @@ export class PoolManager {
         this.scene.physics.world.disable(object);
         this.getPool(pool).killAndHide(object);
     }
+
+    public static clear(): typeof PoolManager {
+        for (const [_, pool] of Object.entries(this.pools)) {
+            pool.destroy(true);
+        }
+
+        this.pools = {};
+
+        return this;
+    }
 }
