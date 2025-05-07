@@ -55,7 +55,7 @@ export class SoundManager {
      * Затухание всех звуков
      * @param duration
      */
-    public static fadeOut(duration: number): void {
+    public static fadeOut(duration: number): typeof SoundManager {
         // запоминаем оригинальную громкость
         const volume = this.scene.sound.volume;
 
@@ -68,6 +68,8 @@ export class SoundManager {
                 this.scene.sound.setVolume(volume);
             },
         });
+
+        return this;
     }
 
     /**
@@ -75,22 +77,30 @@ export class SoundManager {
      * @param duration
      * @param toVolume
      */
-    public static fadeIn(duration: number, toVolume?: number): void {
+    public static fadeIn(duration: number, toVolume?: number): typeof SoundManager {
         // запоминаем оригинальную громкость
         toVolume ??= this.scene.sound.volume;
 
         this.scene.sound.setVolume(0);
-        this.scene.tweens.add({
-            targets: this.scene.sound,
-            volume: toVolume,
-            duration: duration,
+
+        // bugfix: моментальное возрастание громкости
+        this.scene.time.addEvent({
+            callback: () => this.scene.tweens.add({
+                targets: this.scene.sound,
+                volume: toVolume,
+                duration: duration,
+            }),
         });
+
+        return this;
     }
 
     /**
      * Резкая остановка всех звуков
      */
-    public static stopAll(): void {
+    public static stopAll(): typeof SoundManager{
         this.scene.sound.stopAll();
+
+        return this;
     }
 }

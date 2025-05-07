@@ -45,7 +45,7 @@ export class Home extends Scene {
         this.tweens.add({
             targets: this.mainMenu,
             x: this.cameras.main.width - menuWidth,
-            duration: 100,
+            duration: 200,
         });
     }
 }
