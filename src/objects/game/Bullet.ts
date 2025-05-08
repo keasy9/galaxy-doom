@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 import {Scene} from "phaser";
-import {CollisionGroup, CollisionManager} from "../../utils/managers/CollisionManager.ts";
+import {CollisionGroup} from "../../scenes/plugins/Collisions.ts";
 import {IRecyclable} from "../interfaces/IRecyclable.ts";
 import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
@@ -25,9 +25,9 @@ export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
 
         physics.add.existing(this, false);
 
-        CollisionManager.add(
+        this.scene.collisions.add(
             this as GameObjectWithBody,
-            isFromPlayer ? CollisionGroup.player : CollisionGroup.enemy
+            isFromPlayer ? CollisionGroup.Player : CollisionGroup.Enemy
         );
 
         const body = (this.body as Phaser.Physics.Arcade.Body);
@@ -109,14 +109,14 @@ export class Bullet extends Phaser.GameObjects.Sprite implements IRecyclable {
         if (x) this.x = x;
         if (y) this.y = y;
 
-        CollisionManager.remove(
+        this.scene.collisions.remove(
             this as GameObjectWithBody,
-            isFromPlayer ? CollisionGroup.enemy : CollisionGroup.player
+            isFromPlayer ? CollisionGroup.Enemy : CollisionGroup.Player
         );
 
-        CollisionManager.add(
+        this.scene.collisions.add(
             this as GameObjectWithBody,
-            isFromPlayer ? CollisionGroup.player : CollisionGroup.enemy
+            isFromPlayer ? CollisionGroup.Player : CollisionGroup.Enemy
         );
 
         (this.body as Body).setVelocityY(-Bullet.speed);

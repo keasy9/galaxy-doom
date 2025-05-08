@@ -1,5 +1,5 @@
 import {Level} from "../../scenes/Level.ts";
-import {CollisionGroup, CollisionManager} from "../../utils/managers/CollisionManager.ts";
+import {CollisionGroup} from "../../scenes/plugins/Collisions.ts";
 import {Explosion} from "./Explosion.ts";
 import {Pool, PoolManager} from "../../utils/managers/PoolManager.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
@@ -60,7 +60,7 @@ export class Player extends Phaser.GameObjects.Container {
         }
 
         physics.add.existing(this, false);
-        CollisionManager.add(this as GameObjectWithBody, CollisionGroup.player);
+        this.scene.collisions.add(this as GameObjectWithBody, CollisionGroup.Player);
 
         (this.body as Phaser.Physics.Arcade.Body)
             .setCircle(this.spaceshipSprite.width / 2)

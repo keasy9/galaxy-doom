@@ -104,7 +104,7 @@ export class Gui extends ScenePlugin {
         return this;
     }
 
-    public destroy() {
+    public destroy(): void {
         this.focusables = [];
         delete this.currentFocused;
 

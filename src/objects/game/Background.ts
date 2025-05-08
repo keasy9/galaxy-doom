@@ -86,5 +86,4 @@ export class Background extends Phaser.GameObjects.Layer {
             }
         });
     }
-
 }

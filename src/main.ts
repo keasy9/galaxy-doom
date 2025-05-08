@@ -4,6 +4,7 @@ import {Boot} from "./scenes/Boot.ts";
 import {Home} from "./scenes/Home.ts";
 import {Gui} from "./scenes/plugins/Gui.ts";
 import {Pause} from "./scenes/Pause.ts";
+import {Collisions} from "./scenes/plugins/Collisions.ts";
 
 const TARGET_GAME_RESOLUTION = 420;
 let gameWidth, gameHeight;
@@ -35,6 +36,7 @@ const config: Types.Core.GameConfig = {
             debug: false,
             debugShowVelocity: false,
             debugBodyColor: 0xffffff,
+            fps: GAME_FPS,
         },
     },
     fps: {target: GAME_FPS},
@@ -45,6 +47,12 @@ const config: Types.Core.GameConfig = {
                 key: 'GuiManager',
                 plugin: Gui,
                 mapping: 'gui',
+                start: true,
+            },
+            {
+                key: 'CollisionManager',
+                plugin: Collisions,
+                mapping: 'collisions',
                 start: true,
             },
         ],

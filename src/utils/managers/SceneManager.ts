@@ -2,7 +2,6 @@ import {SoundManager} from "./SoundManager.ts";
 import {Scene} from "phaser";
 import {PoolManager} from "./PoolManager.ts";
 import {Translator} from "./Translator.ts";
-import {CollisionManager} from "./CollisionManager.ts";
 
 export enum SceneEnum {
     Boot = 'boot',
@@ -69,7 +68,6 @@ export class SceneManager {
 
         // специфичны для сцен. Потенциальная оптимизация
         PoolManager.init(scene);
-        CollisionManager.init(scene);
 
         return this;
     }
@@ -80,7 +78,6 @@ export class SceneManager {
      */
     protected static clearResourcesOnSceneChange(): typeof SceneManager {
         PoolManager.clear();
-        CollisionManager.clear();
 
         return this;
     }

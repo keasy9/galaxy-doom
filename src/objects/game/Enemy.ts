@@ -1,4 +1,4 @@
-import {CollisionGroup, CollisionManager} from "../../utils/managers/CollisionManager.ts";
+import {CollisionGroup} from "../../scenes/plugins/Collisions.ts";
 import GameObjectWithBody = Phaser.Types.Physics.Arcade.GameObjectWithBody;
 import {Explosion} from "./Explosion.ts";
 import {IRecyclable} from "../interfaces/IRecyclable.ts";
@@ -17,7 +17,7 @@ export class Enemy extends Phaser.GameObjects.Sprite implements IRecyclable{
         super(scene, x, y, sprite, frame);
 
         scene.physics.add.existing(this, false);
-        CollisionManager.add(this as GameObjectWithBody, CollisionGroup.enemy);
+        this.scene.collisions.add(this as GameObjectWithBody, CollisionGroup.Enemy);
 
         const body = (this.body as Phaser.Physics.Arcade.Body);
         body.setCircle(this.width / 2);
