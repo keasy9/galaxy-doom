@@ -4,6 +4,13 @@ import {PoolManager} from "./PoolManager.ts";
 import {Translator} from "./Translator.ts";
 import {CollisionManager} from "./CollisionManager.ts";
 
+export enum SceneEnum {
+    Boot = 'boot',
+    Home = 'home',
+    Level = 'level',
+    Pause = 'pause',
+}
+
 export class SceneManager {
     protected static scene: Scene;
 
@@ -25,7 +32,7 @@ export class SceneManager {
      * @param outDuration
      * @param inDuration
      */
-    public static fadeTo(scene: string | Scene, outDuration: number = 200, inDuration?: number): typeof SceneManager {
+    public static fadeTo(scene: SceneEnum, outDuration: number = 200, inDuration?: number): typeof SceneManager {
         if (inDuration == undefined) inDuration = outDuration = outDuration / 2;
 
         // Сохраняем ссылку на текущую сцену

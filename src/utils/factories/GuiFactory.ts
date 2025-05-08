@@ -6,25 +6,23 @@ import {Button} from "../../objects/gui/Button.ts";
 
 // Растровые шрифты
 export enum Font {
-    main = 'font_press_start_2p',
+    Main = 'font_press_start_2p',
 }
 
 // Стандартизированные размеры шрифта
 export enum FontSize {
-    default = 8,
-    medium = 16,
+    Default = 8,
+    Medium = 16,
 }
 
 // Стандартизированные цвета для элементов интерфейса
 export enum GuiColor {
-    blue = 0x2692f0,
-    grayBlue = 0x91bccf,
-    white = 0xffffff,
+    Blue = 0x2692f0,
+    GrayBlue = 0x91bccf,
+    White = 0xffffff,
 }
 
-/**
- * Фабрика элементов интерфейса
- */
+// Фабрика элементов интерфейса
 export class GuiFactory {
     constructor(protected scene: Scene) {}
 
@@ -63,7 +61,7 @@ export class GuiFactory {
      * @param font шрифт
      * @param origin точка выравнивания
      */
-    public text({x = 0, y = 0, text = '', fontSize = FontSize.default, font = Font.main, origin = 0.5}: {
+    public text({x = 0, y = 0, text = '', fontSize = FontSize.Default, font = Font.Main, origin = 0.5}: {
         x?: number,
         y?: number,
         text?: string,

@@ -5,15 +5,16 @@ import {Bullet} from "../objects/game/Bullet.ts";
 import {LevelManager} from "../utils/managers/LevelManager.ts";
 import {Explosion} from "../objects/game/Explosion.ts";
 import KeyCodes = Phaser.Input.Keyboard.KeyCodes;
+import {SceneEnum} from "../utils/managers/SceneManager.ts";
+import {Pause} from "./Pause.ts";
 
 export class Level extends Scene {
     protected bg: Background;
     protected player: Player;
     protected levelManager: LevelManager;
-    protected isPaused: boolean = false;
-    protected togglingPause: boolean = false;
+    protected pause: Pause;
 
-    constructor(key: string = 'level') {
+    constructor(key: string = SceneEnum.Level) {
         super(key);
     }
 
@@ -35,21 +36,13 @@ export class Level extends Scene {
 
         this.levelManager.loadLevel(true);
 
-        this.input.keyboard?.addKey(KeyCodes.ESC).on('down', this.togglePause.bind(this));
+        this.scene.launch(SceneEnum.Pause);
+        this.pause = this.scene.get(SceneEnum.Pause) as Pause;
+
+        this.input.keyboard?.addKey(KeyCodes.ESC).on('down', () => this.pause.togglePause());
     }
 
     update() {
         this.player.update();
-    }
-
-    public togglePause() {
-        if (this.togglingPause) return;
-        this.togglingPause = true;
-
-        if (this.isPaused) {
-
-        } else {
-
-        }
     }
 }

@@ -5,7 +5,7 @@ import {Sound, SoundInstance, SoundManager} from "../utils/managers/SoundManager
 import {TEXTURE_MENU_BG} from "./Home.ts";
 import {Translator} from "../utils/managers/Translator.ts";
 import {Font, FontSize, GuiColor} from "../utils/factories/GuiFactory.ts";
-import {SceneManager} from "../utils/managers/SceneManager.ts";
+import {SceneEnum, SceneManager} from "../utils/managers/SceneManager.ts";
 
 export const P_ASSETS = '/assets/';
 export const P_SPRITES = P_ASSETS + 'sprites/';
@@ -40,7 +40,7 @@ export class Boot extends Scene {
         Sound.sfx_intro_rainbow,
     ];
 
-    constructor(key: string = 'boot') {
+    constructor(key: string = SceneEnum.Boot) {
         super(key);
 
         SoundManager.init(this);
@@ -52,12 +52,12 @@ export class Boot extends Scene {
         this.progressBar = this.gui.factory.progressbar({
             x: this.cameras.main.centerX,
             y: this.cameras.main.centerY,
-            color: GuiColor.blue,
-            bgColor: GuiColor.grayBlue,
+            color: GuiColor.Blue,
+            bgColor: GuiColor.GrayBlue,
         });
 
         // шрифт
-        this.load.bitmapFont(Font.main, `${P_FONTS}press-start-2p.png`, `${P_FONTS}press-start-2p.xml`);
+        this.load.bitmapFont(Font.Main, `${P_FONTS}press-start-2p.png`, `${P_FONTS}press-start-2p.xml`);
 
         // звуки для интро
         this.load.audio(Sound.sfx_intro_coin, `${P_SOUNDS}coin.mp3`);
@@ -82,9 +82,9 @@ export class Boot extends Scene {
         // обновляем прогрессбар при загрузке
         this.load.on('progress', (value: number) => this.progressBar?.setProgress(value));
 
-        this.load.on(`filecomplete-bitmapfont-${Font.main}`, () => {
+        this.load.on(`filecomplete-bitmapfont-${Font.Main}`, () => {
             // когда шрифт загрузился - пишем проценты
-            this.progressBar?.printProgress(FontSize.medium);
+            this.progressBar?.printProgress(FontSize.Medium);
         }, this);
     }
 
@@ -93,27 +93,27 @@ export class Boot extends Scene {
         delete this.progressBar;
 
         // любое действие пропускает анимацию
-        this.input.on('pointerdown', () => SceneManager.fadeTo('home'));
-        this.input.on('keydown', () => SceneManager.fadeTo('home'));
+        this.input.on('pointerdown', () => SceneManager.fadeTo(SceneEnum.Home));
+        this.input.on('keydown', () => SceneManager.fadeTo(SceneEnum.Home));
 
         const made = this.gui.factory.text({
             x: this.cameras.main.centerX,
             y: this.cameras.main.centerY,
             text: 'made ',
-            fontSize: FontSize.medium,
+            fontSize: FontSize.Medium,
         });
 
         this.currentTextPart = this.gui.factory.text({
             x: this.cameras.main.centerX + made.width / 2,
             y: this.cameras.main.centerY,
             text: this.textParts[0],
-            fontSize: FontSize.medium,
+            fontSize: FontSize.Medium,
         }).setAlpha(0);
 
         this.previousTextPart = this.gui.factory.text({
             x: this.cameras.main.centerX + made.width / 2,
             y: this.cameras.main.centerY - this.textOffset,
-            fontSize: FontSize.medium,
+            fontSize: FontSize.Medium,
         }).setAlpha(0);
 
         this.tweens.add({
@@ -141,7 +141,7 @@ export class Boot extends Scene {
     protected showNextTextPart() {
         if (this.currentTextPartIndex >= this.textParts.length) {
             // если прошли все части, переходим к следующей сцене
-            SceneManager.fadeTo('home', 5000, 100);
+            SceneManager.fadeTo(SceneEnum.Home, 5000, 100);
             return;
         }
 

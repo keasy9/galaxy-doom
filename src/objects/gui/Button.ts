@@ -28,7 +28,7 @@ export class Button extends GuiElement implements IFocusable {
     ) {
         super(scene, x, y);
 
-        this.texture = new Graphics(scene).setScale(1.2, 0);
+        this.texture = new Graphics(scene).setPosition(0, 0);
         this.text.setOrigin(0.5);
         this.hitbox = new Zone(this.scene, 0, 0, width, height).setOrigin(0, 0);
 
@@ -45,6 +45,7 @@ export class Button extends GuiElement implements IFocusable {
     public destroy(): void {
         this.text.destroy();
         this.texture.destroy();
+        this.hitbox.destroy();
         this.scene.gui.removeFocusable(this);
         super.destroy();
     }
@@ -59,11 +60,7 @@ export class Button extends GuiElement implements IFocusable {
             this.hitbox?.removeInteractive();
         }
 
-        this.texture
-            .clear()
-            .fillStyle(GuiColor.white)
-            .fillRect(0, 0, width, height)
-            .setPosition(this.width * -0.2, this.height / 2);
+        this.texture.clear()
 
         this.text.setPosition(width / 2, height / 2);
 
@@ -74,12 +71,18 @@ export class Button extends GuiElement implements IFocusable {
         if (this.focused) return this;
         this.focused = true;
 
+        this.texture
+            .setPosition(this.width / 2, this.height / 2)
+            .fillStyle(GuiColor.White)
+            .fillRect(0, 0, this.width, this.height)
+            .setScale(0);
+
         this.scene.tweens.add({
             targets: this.texture,
-            duration: 50,
-            scaleX: 1.05,
+            duration: 100, // todo при замедлении до 5000 видно, что не выровнено по центру
+            scaleX: 1.2,
             scaleY: 0.1,
-            x: 0,
+            x: -this.width * 0.1,
             y: this.height / 2 - this.height * 0.05,
             onComplete: () => this.texture
                 .setScale(1)
@@ -101,14 +104,9 @@ export class Button extends GuiElement implements IFocusable {
         this.scene.tweens.add({
             targets: this.texture,
             duration: 50,
-            scaleX: 1.2,
             scaleY: 0,
-            x: this.width * -0.2,
             y: this.height / 2,
-            onComplete: () => this.texture
-                .clear()
-                .fillStyle(GuiColor.white)
-                .fillRect(this.width * -0.2, this.height / 2, this.width, this.height)
+            onComplete: () => this.texture.clear()
         });
 
         SoundManager.play(Sound.sfx_short_glitch);

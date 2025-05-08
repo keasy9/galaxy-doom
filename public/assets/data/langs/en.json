@@ -1,4 +1,6 @@
 {
     "play":     "play",
-    "settings": "settings"
+    "settings": "settings",
+    "continue": "continue",
+    "exit":     "exit"
 }

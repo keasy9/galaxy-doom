@@ -3,6 +3,7 @@ import {Level} from "./scenes/Level.ts";
 import {Boot} from "./scenes/Boot.ts";
 import {Home} from "./scenes/Home.ts";
 import {Gui} from "./scenes/plugins/Gui.ts";
+import {Pause} from "./scenes/Pause.ts";
 
 const TARGET_GAME_RESOLUTION = 420;
 let gameWidth, gameHeight;
@@ -37,7 +38,7 @@ const config: Types.Core.GameConfig = {
         },
     },
     fps: {target: GAME_FPS},
-    scene: [Boot, Home, Level],
+    scene: [Boot, Home, Level, Pause],
     plugins: {
         scene: [
             {

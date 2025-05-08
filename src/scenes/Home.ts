@@ -3,14 +3,14 @@ import {Menu} from '../objects/gui/Menu.ts';
 import {GuiColor} from "../utils/factories/GuiFactory.ts";
 import {Translator} from "../utils/managers/Translator.ts";
 import {Sound, SoundManager} from "../utils/managers/SoundManager.ts";
-import {SceneManager} from "../utils/managers/SceneManager.ts";
+import {SceneEnum, SceneManager} from "../utils/managers/SceneManager.ts";
 
 export const TEXTURE_MENU_BG = 'menu-bg';
 
 export class Home extends Scene {
     protected mainMenu: Menu;
 
-    constructor(key: string = 'home') {
+    constructor(key: string = SceneEnum.Home) {
         super(key);
     }
 
@@ -27,13 +27,13 @@ export class Home extends Scene {
         }).with(
             this.gui.factory.button({
                 text: Translator.get('play'),
-                onclick: () => SceneManager.fadeTo('level'),
-                color: GuiColor.blue,
+                onclick: () => SceneManager.fadeTo(SceneEnum.Level),
+                color: GuiColor.Blue,
             }),
             this.gui.factory.button({
                 text: Translator.get('settings'),
                 onclick: () => console.log('settings'),
-                color: GuiColor.blue,
+                color: GuiColor.Blue,
             }),
         ).render();
 
