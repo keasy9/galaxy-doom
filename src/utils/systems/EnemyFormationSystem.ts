@@ -1,34 +1,43 @@
 import {EnemyWave} from "../../objects/game/EnemyWave.ts";
 import {Enemy} from "../../objects/game/Enemy.ts";
 import {ENEMY_EDGE_OFFSET} from "../../const.ts";
+import Vector2Like = Phaser.Types.Math.Vector2Like;
 
-enum ScreenPositionPreset {
-    topCenter = 'topCenter',
-    bottomLeft = 'bottomLeft',
-    bottomRight = 'bottomRight',
+// Позиция начала волны
+export enum EWavePosition {
+    TopCenter = 'topCenter',
+    BottomLeft = 'bottomLeft',
+    BottomRight = 'bottomRight',
 }
 
-type TPoint = { x: number, y: number }
-export type TWavePosition = TPoint | ScreenPositionPreset;
-
-export enum FormationPattern {
-    grid = 'grid',
-    circle = 'circle',
-    vShape = 'v-shape',
+// Паттерн построения
+export enum EFormationPattern {
+    Grid = 'grid',
+    VShape = 'vShape',
 }
 
 /**
  * Система построений врагов
  *
- * Отвечает за построение врагов в шаблон (сетку, буквой v и пр.) или последовательность
+ * Отвечает за построение врагов в шаблон (сетку, буквой v и пр.) или последовательность, а также размещение волны врагов на указанной позиции
+ *
+ * todo сейчас не учитывает направление движения врагов
  */
 export class EnemyFormationSystem {
-    public static waveToSequence(wave: EnemyWave, position: TWavePosition, delay: number): void {
-        position = this.normalizePosition(position, wave.scene.cameras.main);
+    /**
+     * Преобразовать волну в последовательность спавна врагов
+     * @param wave
+     * @param position
+     * @param delay
+     *
+     * todo метод не отсюда. Утащить в waveFactory или отдельный класс. Либо переименовать этот класс, например в waveInitSystem
+     */
+    public static applySequence(wave: EnemyWave, position: EWavePosition, delay: number): void {
+        const point = this.positionToPoint(position, wave.scene.cameras.main);
 
         wave.list.forEach((object, index) => {
             const enemy = object as Enemy;
-            enemy.setPosition(position.x, position.y);
+            enemy.setPosition(point.x, point.y);
             enemy.setActive(false);
             enemy.scene.time.addEvent({
                 delay: delay * index,
@@ -37,42 +46,51 @@ export class EnemyFormationSystem {
         });
     }
 
-    public static waveToFormation(
+    /**
+     * Применить построение к волне врагов
+     * @param wave
+     * @param position
+     * @param formationType
+     * @param spacing
+     */
+    public static applyFormation(
         wave: EnemyWave,
-        position: TWavePosition,
-        formationType: FormationPattern,
+        position: EWavePosition,
+        formationType: EFormationPattern,
         spacing: number,
     ): void {
-        position = this.normalizePosition(position, wave.scene.cameras.main);
+        const point = this.positionToPoint(position, wave.scene.cameras.main);
 
         switch (formationType) {
-            case FormationPattern.grid:
-                this.gridFormation(wave, position, spacing)
+            case EFormationPattern.Grid:
+                this.gridFormation(wave, point, spacing)
                 break;
-            case FormationPattern.vShape:
-                this.vFormation(wave, position, spacing)
-                break;
-            case FormationPattern.circle:
-                this.circleFormation(wave, position, spacing)
+            case EFormationPattern.VShape:
+                this.vFormation(wave, point, spacing)
                 break;
         }
     }
 
+    /**
+     * Построить врагов сеткой
+     * @param wave
+     * @param position
+     * @param spacing
+     */
     public static gridFormation(
         wave: EnemyWave,
-        position: TPoint,
+        position: Vector2Like,
         spacing: number,
     ): void {
-        // todo учитывать угол
         const enemyWidth = (wave.first as Enemy).width;
         const enemyHeight = (wave.first as Enemy).height;
 
-        const gridCellWidth = enemyWidth + spacing;
+        const gridCellWidth = enemyWidth + enemyWidth * spacing;
         const gridWidth = wave.scene.cameras.main.width - ENEMY_EDGE_OFFSET * 2;
         const itemsInRow = Phaser.Math.FloorTo(gridWidth / gridCellWidth);
-        const cellHeight = enemyHeight + spacing;
+        const cellHeight = enemyHeight + enemyHeight * spacing;
 
-        // todo переписать руками чтобы автоматически центрировать когда врагов нехватает на полный ряд
+        // todo переписать руками чтобы центрировать когда врагов нехватает на полный ряд
         Phaser.Actions.GridAlign(wave.list, {
             cellWidth: gridCellWidth,
             cellHeight: cellHeight,
@@ -84,13 +102,17 @@ export class EnemyFormationSystem {
         });
     }
 
+    /**
+     * Построить врагов клином
+     * @param wave
+     * @param position
+     * @param spacing
+     */
     public static vFormation(
         wave: EnemyWave,
-        position: TPoint,
+        position: Vector2Like,
         spacing: number,
     ): void {
-        // todo учитывать угол
-
         // угол между ветвями
         const radians = Phaser.Math.DegToRad(30);
 
@@ -114,8 +136,8 @@ export class EnemyFormationSystem {
             const isLeftBranch = i % 2 !== 0;
 
             // Рассчитываем смещение для текущего ряда
-            const xOffset = (spacing + enemy.width) * row;
-            const yOffset = (spacing + enemy.height) * row * Math.tan(radians);
+            const xOffset = (spacing * enemy.width + enemy.width) * row;
+            const yOffset = (spacing * enemy.height + enemy.height) * row * Math.tan(radians);
 
             // Рассчитываем позиции для левой и правой ветвей
             if (isLeftBranch) {
@@ -142,23 +164,19 @@ export class EnemyFormationSystem {
         }
     }
 
-    public static circleFormation(
-        wave: EnemyWave,
-        position: TPoint,
-        spacing: number,
-    ): void {
-        // todo
-    }
-
-    protected static normalizePosition(position: TWavePosition, camera: Phaser.Cameras.Scene2D.Camera): TPoint {
-        if (typeof position === 'object') return position;
-
+    /**
+     * Преобразовать позицию в точку на экране
+     * @param position
+     * @param camera
+     * @protected
+     */
+    protected static positionToPoint(position: EWavePosition, camera: Phaser.Cameras.Scene2D.Camera): Vector2Like {
         switch (position) {
-            case ScreenPositionPreset.topCenter:
-                return {x: camera.width / 2, y: -ENEMY_EDGE_OFFSET};
-            case ScreenPositionPreset.bottomLeft:
+            case EWavePosition.TopCenter:
+                return {x: camera.width / 2, y: ENEMY_EDGE_OFFSET};
+            case EWavePosition.BottomLeft:
                 return {x: -ENEMY_EDGE_OFFSET, y: camera.height + ENEMY_EDGE_OFFSET};
-            case ScreenPositionPreset.bottomRight:
+            case EWavePosition.BottomRight:
                 return {x: camera.width + ENEMY_EDGE_OFFSET, y: camera.height + ENEMY_EDGE_OFFSET};
         }
     }

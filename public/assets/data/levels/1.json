@@ -1,0 +1,104 @@
+{
+    "number":   1,
+    "timeline": [
+        {
+            "type": "wave",
+            "data": {
+                "type":          "formation",
+                "enemyType":     "fighter",
+                "enemyCount":    18,
+                "spawnPosition": "topCenter",
+                "formation":     "grid",
+                "spacing":       1,
+                "movement":  {
+                    "pattern":   "linear",
+                    "speed":     0.1,
+                    "direction": "down"
+                }
+            }
+        },
+        {
+            "type": "wave",
+            "data": {
+                "type":          "sequence",
+                "enemyType":     "fighter",
+                "enemyCount":    12,
+                "spawnPosition": "bottomLeft",
+                "nextWaveIn":    250,
+                "spawnDelay":    500,
+                "movement":  {
+                    "pattern":   "linear",
+                    "speed":     0.2,
+                    "direction": "upRight"
+                }
+            }
+        },
+        {
+            "type": "wave",
+            "data": {
+                "type":          "sequence",
+                "enemyType":     "fighter",
+                "enemyCount":    12,
+                "spawnPosition": "bottomRight",
+                "spawnDelay":    500,
+                "movement":  {
+                    "pattern":   "linear",
+                    "speed":     0.2,
+                    "direction": "upLeft"
+                }
+            }
+        },
+        {
+            "type": "wave",
+            "data": {
+                "type":          "formation",
+                "enemyType":     "fighter",
+                "enemyCount":    5,
+                "spawnPosition": "topCenter",
+                "nextWaveIn":    500,
+                "spacing":       0.5,
+                "formation":     "vShape",
+                "movement":  {
+                    "pattern":   "linear",
+                    "speed":     0.1,
+                    "direction": "down"
+                }
+            }
+        },
+        {
+            "type": "wave",
+            "data": {
+                "type":          "formation",
+                "enemyType":     "fighter",
+                "enemyCount":    6,
+                "spawnPosition": "topCenter",
+                "nextWaveIn":    2000,
+                "spacing":       0.5,
+                "formation":     "vShape",
+                "movement":  {
+                    "pattern":   "linear",
+                    "speed":     0.1,
+                    "direction": "down"
+                }
+            }
+        },
+        {
+            "type": "wave",
+            "data": {
+                "type":          "formation",
+                "enemyType":     "fighter",
+                "enemyCount":    18,
+                "spawnPosition": "topCenter",
+                "spacing":       1,
+                "formation":     "grid",
+                "movement":  {
+                    "pattern":   "sine",
+                    "speed":     0.05,
+                    "direction": "down",
+                    "frequency": 0.005,
+                    "amplitude": 100
+                }
+            }
+        }
+    ]
+}

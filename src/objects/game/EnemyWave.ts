@@ -43,7 +43,7 @@ export class EnemyWave extends Phaser.GameObjects.Container {
             if (this.movementParams) {
 
                 EnemyMovementSystem.applyMovement(enemy as Enemy, this.movementParams, this.precomputedMovement);
-                if (EnemyMovementSystem.isOutOfBounds(enemy as Enemy, this.movementParams)) {
+                if (EnemyMovementSystem.isOutOfBounds(enemy as Enemy, this.movementParams.direction)) {
                     enemy.destroy();
                 }
             }

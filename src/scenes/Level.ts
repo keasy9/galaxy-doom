@@ -34,7 +34,7 @@ export class Level extends Scene {
 
         this.player = this.add.existing(new Player(this, this.cameras.main.width / 2, this.cameras.main.height - 30))
 
-        this.levelManager.loadLevel(true);
+        this.levelManager.load(1);
 
         this.scene.launch(SceneEnum.Pause);
         this.pause = this.scene.get(SceneEnum.Pause) as Pause;

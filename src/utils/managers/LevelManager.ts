@@ -1,47 +1,82 @@
 import {Scene} from "phaser";
-import {TWaveData, WaveManager} from "./WaveManager.ts";
-import {WaveFactory, EnemyType} from "../factories/WaveFactory.ts";
+import {WaveManager} from "./WaveManager.ts";
+import {WaveFactory, EEnemyType, TWaveData} from "../factories/WaveFactory.ts";
 import {P_LEVELS} from "../../scenes/Boot.ts";
 
-export type LevelData = {
-    waves: TWaveData[];
-};
+type TLevelData = {
+    number: number,
+    timeline: TTimelineEvent[];
+}
+
+enum ETimelineEvent {
+    Wave = 'wave',
+    Dialog = 'dialog',
+}
+
+interface BaseTimelineEvent {
+    type: ETimelineEvent,
+    data: TWaveData | TMonologData[],
+}
+
+interface WaveTimelineEvent extends BaseTimelineEvent {
+    type: ETimelineEvent.Wave,
+    data: TWaveData,
+}
+
+interface DialogTimelineEvent extends BaseTimelineEvent {
+    type: ETimelineEvent.Dialog,
+    data: TMonologData[],
+}
+
+type TTimelineEvent = WaveTimelineEvent | DialogTimelineEvent;
+
+type TMonologData = {
+    // todo
+}
 
 export class LevelManager {
-    protected levelData: LevelData;
+    protected levelData: TLevelData;
     protected controller?: WaveManager;
 
-    constructor(protected scene: Scene, protected currentLevel: number = 1) {
-    }
+    constructor(protected scene: Scene) {}
 
-    loadLevel(startAfterLoad: boolean = false) {
+    load(levelNumber: number) {
         const levelLoader = new Phaser.Loader.LoaderPlugin(this.scene);
-        const levelName = this.currentLevel.toString().padStart(3, '0');
-        levelLoader.json(levelName, P_LEVELS + `${levelName}.json`);
+        const jsonDataKey = `level_${levelNumber}`;
+
         levelLoader.once(Phaser.Loader.Events.COMPLETE, () => {
-            this.levelData = this.scene.cache.json.get(levelName);
+            this.levelData = this.scene.cache.json.get(jsonDataKey);
 
             const enemyLoader = new Phaser.Loader.LoaderPlugin(this.scene);
 
-            const loadedTypes: EnemyType[] = [];
-            for (const wave of this.levelData.waves) {
-                if (loadedTypes.indexOf(wave.enemyType) === -1) {
-                    WaveFactory.loadAssetsForEnemy(this.scene, wave.enemyType, enemyLoader);
-                    loadedTypes.push(wave.enemyType);
+            const loadedTypes: EEnemyType[] = [];
+            for (const event of this.levelData.timeline) {
+                if (event.type !== ETimelineEvent.Wave) continue;
+
+                if (loadedTypes.indexOf(event.data.enemyType) === -1) {
+                    WaveFactory.loadAssetsForEnemy(this.scene, event.data.enemyType, enemyLoader);
+                    loadedTypes.push(event.data.enemyType);
                 }
             }
 
             enemyLoader.start();
 
-            enemyLoader.on(Phaser.Loader.Events.COMPLETE, () => {
-                if (startAfterLoad) this.startLevel()
-            });
+            enemyLoader.on(Phaser.Loader.Events.COMPLETE, () => this.startLevel());
         });
+
+        levelLoader.json(jsonDataKey, P_LEVELS + `${levelNumber}.json`);
 
         levelLoader.start();
     }
 
     startLevel() {
-        this.controller = new WaveManager(this.scene, this.levelData.waves);
+        const waves: TWaveData[] = [];
+
+        this.levelData.timeline.forEach((event) => {
+            if (event.type === ETimelineEvent.Wave) waves.push(event.data);
+        })
+
+        // todo диалоги
+        this.controller = new WaveManager(this.scene, waves);
     }
 }

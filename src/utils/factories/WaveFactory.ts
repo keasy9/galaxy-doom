@@ -2,43 +2,58 @@ import {Scene} from "phaser";
 import {Enemy} from "../../objects/game/Enemy.ts";
 import {EnemyMovementSystem, TMovementParams} from "../systems/EnemyMovementSystem.ts";
 import {EnemyWave} from "../../objects/game/EnemyWave.ts";
-import {EnemyFormationSystem, FormationPattern, TWavePosition} from "../systems/EnemyFormationSystem.ts";
-import {SceneWithCollisions} from "../../scenes/Level.ts";
+import {EnemyFormationSystem, EFormationPattern, EWavePosition} from "../systems/EnemyFormationSystem.ts";
 import {P_SPRITES} from "../../scenes/Boot.ts";
 
-export enum EnemyType {
-    fighter = 'fighter',
+// Тип врагов
+export enum EEnemyType {
+    Fighter = 'fighter',
 }
 
-enum WaveType {
-    formation = 'formation',
-    sequence = 'sequence',
+// Тип волны
+enum EWaveType {
+    Formation = 'formation',
+    Sequence = 'sequence',
 }
 
+// Волна
 interface WaveData {
-    type: WaveType;
-    enemyType: EnemyType;
-    count: number;
-    position: TWavePosition;
+    type: EWaveType;
+    enemyType: EEnemyType;
+    enemyCount: number;
+    spawnPosition: EWavePosition;
     movement: TMovementParams;
-    delay?: number,
+    nextWaveIn?: number, // через сколько принудительно запустить след. волну
 }
 
+// Построение прагов
 interface FormationWave extends WaveData {
-    type: WaveType.formation;
+    type: EWaveType.Formation;
     spacing: number;
-    formation: FormationPattern;
+    formation: EFormationPattern;
 }
 
+// Последовательное появление врагов из одной точки
 interface SequenceWave extends WaveData {
-    type: WaveType.sequence;
-    sequenceDelay: number;
+    type: EWaveType.Sequence;
+    spawnDelay: number;
 }
 
+// Волна
 export type TWaveData = FormationWave | SequenceWave;
 
+/**
+ * Фабрика волн
+ *
+ * Создаёт и инициализирует волны
+ */
 export class WaveFactory {
-    static create(scene: Scene, data: TWaveData): EnemyWave {
+    /**
+     * Создать волну
+     * @param scene
+     * @param data
+     */
+    public static create(scene: Scene, data: TWaveData): EnemyWave {
         // 1) инициализируем волну и сразу её отключаем
         const wave = new EnemyWave(scene);
         wave.setMovementParams(data.movement)
@@ -48,31 +63,32 @@ export class WaveFactory {
         // 2) определяем тип врага
         let enemyType: typeof Enemy;
         switch (data.enemyType) {
-            case EnemyType.fighter:
+            case EEnemyType.Fighter:
                 enemyType = Enemy;
                 break;
         }
 
         // 3) создаём врагов и добавляем их к волне
-        for (let i = 0; i < data.count; i++) {
-            const enemy: Enemy = new enemyType(scene as SceneWithCollisions, 0, 0, 'fighter-enemy-sprite');
+        for (let i = 0; i < data.enemyCount; i++) {
+            const enemy: Enemy = new enemyType(scene, 0, 0, 'fighter-enemy-sprite');
             enemy.play('fighter-enemy-anim');
             enemy.setVisible(true);
             enemy.addToDisplayList();
 
             EnemyMovementSystem.applyRotate(enemy, data.movement);
-            EnemyMovementSystem.precomputeMovementParams(data.movement, wave.precomputedMovement);
 
             wave.add(enemy);
         }
 
+        EnemyMovementSystem.precomputeMovementParams(data.movement, wave.precomputedMovement);
+
         // 4) формируем волну
         switch (data.type) {
-            case WaveType.sequence:
-                EnemyFormationSystem.waveToSequence(wave, data.position, data.sequenceDelay);
+            case EWaveType.Sequence:
+                EnemyFormationSystem.applySequence(wave, data.spawnPosition, data.spawnDelay);
                 break;
-            case WaveType.formation:
-                EnemyFormationSystem.waveToFormation(wave, data.position, data.formation, data.spacing);
+            case EWaveType.Formation:
+                EnemyFormationSystem.applyFormation(wave, data.spawnPosition, data.formation, data.spacing);
                 break;
         }
 
@@ -88,9 +104,9 @@ export class WaveFactory {
      * @param type Тип врага
      * @param loader Загрузчик ресурсов
      */
-    static loadAssetsForEnemy(scene: Scene, type: EnemyType, loader: Phaser.Loader.LoaderPlugin) {
+    static loadAssetsForEnemy(scene: Scene, type: EEnemyType, loader: Phaser.Loader.LoaderPlugin) {
         switch (type) {
-            case EnemyType.fighter:
+            case EEnemyType.Fighter:
                 loader.spritesheet(
                     'fighter-enemy-sprite',
                     P_SPRITES + 'enemy.png',
